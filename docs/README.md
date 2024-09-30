@@ -1,0 +1,5 @@
+- pipeline
+  - composed of
+    - workflows
+      - implements
+        - actions

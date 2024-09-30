@@ -1,0 +1,1 @@
+terraform -chdir=${{ var.CONFIGURATION_DIRECTORY }} apply -auto-approve

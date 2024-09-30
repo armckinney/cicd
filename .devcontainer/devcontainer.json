@@ -1,0 +1,26 @@
+{
+	"name": "terraform-workflows",
+	"dockerComposeFile": [
+		"../docker-compose.yml"
+	],
+	"service": "dev-container",
+	"workspaceFolder": "/workspaces/terraform-workflows",
+	"postCreateCommand": "cd $WORKSPACE/",
+	"customizations": {
+		"vscode": {
+			"settings": {
+				"terminal.integrated.profiles.linux": {
+					"bash": {
+						"path": "bash",
+						"icon": "terminal-bash"
+					}
+				}
+			},
+			"extensions": [
+				"hashicorp.terraform",
+				"shd101wyy.markdown-preview-enhanced",
+				"janisdd.vscode-edit-csv"
+			]
+		}
+	}
+}
