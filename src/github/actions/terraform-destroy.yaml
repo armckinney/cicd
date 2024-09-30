@@ -1,1 +1,1 @@
-terraform -chdir=${{ var.CONFIGURATION_DIRECTORY }} destroy -auto-approve
+terraform -chdir=${{ var.CONFIGURATION_DIRECTORY }} destroy -auto-approve -var-file=${{ var.CONFIGURATION_ENVIRONMENT_FILE }}

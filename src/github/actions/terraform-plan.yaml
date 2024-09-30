@@ -1,1 +1,1 @@
-terraform -chdir=${{ var.CONFIGURATION_DIRECTORY }} plan
+terraform -chdir=${{ var.CONFIGURATION_DIRECTORY }} plan -var-file=${{ var.CONFIGURATION_ENVIRONMENT_FILE }}

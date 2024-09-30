@@ -1,1 +1,1 @@
-terraform -chdir=${{ var.CONFIGURATION_DIRECTORY }} show
+terraform -chdir=${{ var.CONFIGURATION_DIRECTORY }} show 
