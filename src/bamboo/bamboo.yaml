@@ -1,0 +1,9 @@
+# cicd is implemented at workload-environment combinations; each combination should have an independant plan
+
+!include plans/bamboo/dev.yaml # bamboo-specs development plan - requires manual creation of a development branch
+---
+!include plans/example/dev.yaml
+---
+!include plans/example/test.yaml
+---
+!include plans/example/prod.yaml

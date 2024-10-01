@@ -1,0 +1,7 @@
+script: 
+  description: Lint Terraform Configuration
+  interpreter: SHELL
+  scripts: 
+    - |-
+      #!/bin/bash
+      tflint -chdir=${bamboo.configurationDirectory}

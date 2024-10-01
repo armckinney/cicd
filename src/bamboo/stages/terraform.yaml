@@ -1,0 +1,29 @@
+- Container Build:
+    manual: false
+    final: false
+    jobs:
+    - Container Build
+- Static Analysis:
+    manual: false
+    final: false
+    jobs:
+    - Terraform Validate
+    - Terraform Format
+    - Terraform Lint
+    - Terraform Documentation
+    - Terraform Security
+- Terraform Plan:
+    manual: false
+    final: false
+    jobs:
+    - Terraform Plan
+- Terraform Approval:
+    manual: true
+    final: false
+    jobs:
+    - Terraform Approval
+- Terraform Apply:
+    manual: true
+    final: false
+    jobs:
+    - Terraform Apply

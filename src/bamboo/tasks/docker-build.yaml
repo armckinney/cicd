@@ -1,0 +1,10 @@
+script: 
+  description: Build Docker Image
+  interpreter: SHELL
+  scripts: 
+    - |-
+      #!/bin/bash
+      docker buildx build \
+        --file ${bamboo.dockerfilePath} \
+        --tag ${bamboo.containerRegistryName}/${bamboo.planRepository.name}:${bamboo.planRepository.branchName} \
+        .

@@ -1,0 +1,8 @@
+script: 
+  description: Push Docker Image
+  interpreter: SHELL
+  scripts: 
+    - |-
+      #!/bin/bash
+      echo ${bamboo.registryPassword} | docker login --username ${bamboo.registryUsername} --password-stdin ${bamboo.containerRegistryServer}
+      docker push ${bamboo.containerRegistryName}/${bamboo.planRepository.name}:${bamboo.planRepository.branchName} 

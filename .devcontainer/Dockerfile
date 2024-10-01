@@ -6,7 +6,7 @@ LABEL   deployable="false" \
 # ----- Environment Setup -----
 
 # Set Workspace directory
-ARG WORKSPACE=/workspaces/west-end-financial
+ARG WORKSPACE=/workspaces/terraform-workflows
 ENV WORKSPACE=${WORKSPACE}
 
 # Avoid warnings by switching to noninteractive
@@ -24,15 +24,11 @@ RUN mkdir /tmp/dockerinstall && cd /tmp/dockerinstall \
         gnupg \
         software-properties-common \
         wget \
-    # Azure CLI Keys and Registry
-    && curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
-    && echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $(lsb_release -cs) main"  > /etc/apt/sources.list.d/azure-cli.list \
     # Terraform Keys & Registry
     && wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg \
     && echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/hashicorp.list \
     # Primary Installs
     && apt-get update && apt-get -y install \
-        azure-cli \
         terraform \
     && az extension add --name containerapp --upgrade \
     # Clean up

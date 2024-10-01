@@ -1,5 +1,7 @@
-- pipeline
-  - composed of
-    - workflows
-      - implements
-        - actions
+<!-- TODO: update with Mermaid Charts -->
+
+# GitHub
+
+# GitLab
+
+# Bamboo

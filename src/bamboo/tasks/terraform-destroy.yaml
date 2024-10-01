@@ -1,0 +1,7 @@
+script: 
+  description: Destroy Terraform Configuration
+  interpreter: SHELL
+  scripts: 
+    - |-
+      #!/bin/bash
+      terraform -chdir=${bamboo.configurationDirectory} destroy -auto-approve -var-file=${bamboo.tfvarsFile}

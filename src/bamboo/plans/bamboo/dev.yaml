@@ -1,0 +1,37 @@
+version: 2
+plan:
+  project-key: DATA
+  key: BAMBOODEV
+  name: plan-bamboo-dev
+  description: Plan for Bamboo Specs Development
+
+variables:
+  configurationDirectory: tests/terraform/configurations/example
+  tfvarsFile: env/dev.tfvars
+  tfbackendFile: env/dev.tfbackend
+
+branches: !include branches/bamboo-dev.yaml
+
+
+# static config
+repositories:
+- !include repositories/my-terraform-repository.yaml
+
+notifications: []
+labels: []
+other:
+  concurrent-build-plugin: system-default
+
+# stages
+stages: !include stages/terraform.yaml
+
+# jobs
+Container Build: !include jobs/container-build.yaml
+Terraform Validate: !include jobs/terraform-validate.yaml
+Terraform Format: !include jobs/terraform-format.yaml
+Terraform Lint: !include jobs/terraform-lint.yaml
+Terraform Documentation: !include jobs/terraform-docs.yaml
+Terraform Security: !include jobs/terraform-security.yaml
+Terraform Plan: !include jobs/terraform-plan.yaml
+Terraform Approval: !include jobs/terraform-plan-approval.yaml
+Terraform Apply: !include jobs/terraform-apply.yaml

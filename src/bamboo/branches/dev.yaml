@@ -1,0 +1,3 @@
+create: for-new-branch
+delete: never
+link-to-jira: false
