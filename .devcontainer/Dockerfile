@@ -1,44 +1,50 @@
-FROM armck/ubuntu:20.04
+FROM armck/ubuntu:20.04 
 
-LABEL   deployable="false" \
-        decription="This is the development image for the terraform-workflows project."
-
-# ----- Environment Setup -----
+ARG TERRAFORM_VERSION=1.9.5-1
+ARG TERRAFORM_DOCS_VERSION=0.18.0
+ARG TFLINT_VERSION=0.53.0
+ARG TRIVY_VERSION=0.55.2
 
 # Set Workspace directory
-ARG WORKSPACE=/workspaces/terraform-workflows
+ARG WORKSPACE=/workspaces/data-eng-workspace
 ENV WORKSPACE=${WORKSPACE}
 
 # Avoid warnings by switching to noninteractive
 ENV DEBIAN_FRONTEND=noninteractive
 
-# ----- Primary Installs -----
-# uses tmp install directory to keep from caching install downloads
-
 RUN mkdir /tmp/dockerinstall && cd /tmp/dockerinstall \
-    # Installs
-    # Supporting Packages
-    && apt-get update && apt-get -y install  \
-        ca-certificates \
+    # install supporting utils
+    && apt update && apt install -y \
         curl \
         gnupg \
         software-properties-common \
+        unzip \
         wget \
-    # Terraform Keys & Registry
-    && wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg \
-    && echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/hashicorp.list \
-    # Primary Installs
-    && apt-get update && apt-get -y install \
-        terraform \
-    && az extension add --name containerapp --upgrade \
-    # Clean up
-    && apt-get autoremove -y \
-    && apt-get clean -y \
+    # trivy gpg key and source
+    && wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | tee /usr/share/keyrings/trivy.gpg > /dev/null \
+    && echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" | tee -a /etc/apt/sources.list.d/trivy.list \
+    # install terraform-docs
+    && curl -Lo terraform-docs.tar.gz "https://github.com/terraform-docs/terraform-docs/releases/download/v${TERRAFORM_DOCS_VERSION}/terraform-docs-v${TERRAFORM_DOCS_VERSION}-$(uname)-$(dpkg --print-architecture).tar.gz" \
+    && tar -xzf terraform-docs.tar.gz \
+    && chmod +x terraform-docs \
+    && mv terraform-docs /usr/local/bin/terraform-docs \
+    # install tflint
+    && curl --fail -sS -L -o tflint.zip  "https://github.com/terraform-linters/tflint/releases/download/v${TFLINT_VERSION}/tflint_$(uname)_$(dpkg --print-architecture).zip" \ 
+    && unzip -o tflint.zip \
+    && mv tflint /usr/local/bin/tflint \
+    # terraform gpg key & source
+    && wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | tee /usr/share/keyrings/hashicorp-archive-keyring.gpg > /dev/null \
+    && echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" |  tee /etc/apt/sources.list.d/hashicorp.list \    
+    # # primary installs
+    && apt update && apt install -y \
+        terraform=${TERRAFORM_VERSION} \
+        trivy=${TRIVY_VERSION} \
+    #  Clean up
+    && apt autoremove -y \
+    && apt clean -y \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /tmp/dockerinstall
 
-# ----- Workspace Prep -----
 WORKDIR ${WORKSPACE}
-
 # Switch back to dialog for any ad-hoc use of apt-get
 ENV DEBIAN_FRONTEND=dialog
