@@ -3,4 +3,6 @@ script:
   interpreter: SHELL
   scripts: 
     - |-
+      # todo: implement exporting all cloud provider bamboo vars (bamboo_PROVIDER_ENV_VAR) to striped name (PROVIDER_ENV_VAR)
+      # either via getting a list of ENV vars in file, or attempt to export all `bamboo_` prefixed vars
       terraform -chdir=${bamboo.configurationDirectory} init -backend-config=${bamboo.tfbackendFile} -reconfigure
