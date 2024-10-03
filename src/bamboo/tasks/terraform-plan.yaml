@@ -3,5 +3,4 @@ script:
   interpreter: SHELL
   scripts: 
     - |-
-      #!/bin/bash
       terraform -chdir=${bamboo.configurationDirectory} plan -var-file=${bamboo.tfvarsFile}

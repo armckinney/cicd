@@ -3,7 +3,6 @@ script:
   interpreter: SHELL
   scripts: 
     - |-
-      #!/bin/bash
       # unhide the imports file temporarily for import-specific task
       mv ${bamboo.configurationDirectory}/.imports.tf ${bamboo.configurationDirectory}/imports.tf
 

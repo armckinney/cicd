@@ -3,5 +3,4 @@ script:
   interpreter: SHELL
   scripts:
     - |-
-      #!/bin/bash
       echo "Terraform Plan Approved by: ${bamboo.ManualBuildTriggerReason.userName}"

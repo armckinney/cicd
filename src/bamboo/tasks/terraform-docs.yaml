@@ -3,5 +3,4 @@ script:
   interpreter: SHELL
   scripts: 
     - |-
-      #!/bin/bash
       [ -f "${bamboo.configurationDirectory}/README.md" ] || { echo "${bamboo.configurationDirectory}/README.md NOT FOUND" ; exit 1 ;}

@@ -3,5 +3,4 @@ script:
   interpreter: SHELL
   scripts: 
     - |-
-      #!/bin/bash
       trivy config --tf-exclude-downloaded-modules --severity HIGH,CRITICAL --exit-code 1 ${bamboo.configurationDirectory}
