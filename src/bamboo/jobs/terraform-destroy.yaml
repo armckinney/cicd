@@ -8,6 +8,7 @@ docker:
   docker-run-arguments: []
 tasks:
   - !include tasks/checkout-repository.yaml
+  - !include tasks/configure-aws-auth.yaml
   - !include tasks/terraform-init.yaml
   - !include tasks/terraform-destroy.yaml
 artifact-subscriptions: []

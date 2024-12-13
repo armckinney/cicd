@@ -1,3 +1,5 @@
+# bamboo development should be ad-hoc and not automated
+# bamboo plan/cicd development should be manually initiated by creation of a branch of the bamboo development plan
 create: manually
 delete: never
 link-to-jira: false

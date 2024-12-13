@@ -3,7 +3,4 @@ script:
   interpreter: SHELL
   scripts: 
     - |-
-      # export select `bamboo_x` prefixed vars so they can be properly consumed by terraform providers
-      while read var; do export $var=$(eval echo \$$"bamboo_$var"); done < bamboo-specs/bamboo-export-variables.txt
-      
       terraform -chdir=${bamboo.configurationDirectory} init -backend-config=${bamboo.tfbackendFile} -reconfigure

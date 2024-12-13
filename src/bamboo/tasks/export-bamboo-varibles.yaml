@@ -1,0 +1,9 @@
+script: 
+  description: Export Bamboo Variables
+  interpreter: SHELL
+  scripts: 
+    - |-
+      # export select bamboo_ prefixed vars so they can be properly comsumed by terraform providers 
+      # reasoning - see: https://registry.terraform.io/providers/hashicorp/aws/latest/docs#environment-variables
+      echo "Exporting Bamboo Variables"
+      while read var; do export $var=$(eval echo \$$"bamboo_$var"); done < bamboo-specs/bamboo-export-variables.txt

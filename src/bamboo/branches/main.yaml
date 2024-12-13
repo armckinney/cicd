@@ -1,3 +1,4 @@
+# for plans that should only run on the main branch - generally, all "not-dev" environments
 create: manually
 delete: never
 link-to-jira: false
