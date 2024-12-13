@@ -6,4 +6,5 @@ services:
       context: ./
     volumes:
       - .:/workspaces/terraform-workflows:cached
+      - ~/.aws:/root/.aws:ro
     command: /bin/sh -c "while sleep 1000; do :; done"
