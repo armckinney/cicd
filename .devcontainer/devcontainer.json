@@ -19,7 +19,8 @@
 			"extensions": [
 				"hashicorp.terraform",
 				"shd101wyy.markdown-preview-enhanced",
-				"janisdd.vscode-edit-csv"
+				"janisdd.vscode-edit-csv",
+				"github.vscode-github-actions"
 			]
 		}
 	}
