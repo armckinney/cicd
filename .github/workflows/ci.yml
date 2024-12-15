@@ -41,7 +41,7 @@ jobs:
         context: ./
         file: ./.devcontainer/Dockerfile
         builder: ${{ steps.buildx.outputs.name }}
-        tags: ${{ secrets.DOCKER_HUB_ID }}/west-end-financial:${{ github.sha }}
+        tags: ${{ secrets.DOCKER_HUB_ID }}/terraform-workflows:${{ github.sha }}
         cache-from: type=local,src=/tmp/.buildx-cache
         cache-to: type=local,dest=/tmp/.buildx-cache-new
         push: true
