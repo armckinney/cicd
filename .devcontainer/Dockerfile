@@ -11,7 +11,7 @@ ARG WORKSPACE=/workspaces/terraform-workflows
 ENV WORKSPACE=${WORKSPACE}
 
 # set default AWS_PROFILE if not running on Bamboo
-ARG AWS_PROFILE=${bamboo_buildKey:+default}
+ARG AWS_PROFILE=${CI:+default}
 ENV AWS_PROFILE=${AWS_PROFILE:-}
 
 # avoid warnings by switching to noninteractive
