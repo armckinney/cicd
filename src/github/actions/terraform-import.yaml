@@ -1,3 +1,0 @@
-mv ${{ var.CONFIGURATION_DIRECTORY }}/.imports.tf ${{ var.CONFIGURATION_DIRECTORY }}/imports.tf
-terraform -chdir=${{ var.CONFIGURATION_DIRECTORY }} refresh -var-file=${{ var.CONFIGURATION_ENVIRONMENT_FILE }}
-mv ${{ var.CONFIGURATION_DIRECTORY }}/imports.tf ${{ var.CONFIGURATION_DIRECTORY }}/.imports.tf

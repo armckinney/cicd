@@ -1,2 +1,0 @@
-terraform -chdir=${{ var.CONFIGURATION_DIRECTORY }} init -backend=false
-terraform -chdir=${{ var.CONFIGURATION_DIRECTORY }} validate 

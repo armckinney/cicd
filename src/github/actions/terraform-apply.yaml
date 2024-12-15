@@ -1,1 +1,0 @@
-terraform -chdir=${{ var.CONFIGURATION_DIRECTORY }} apply -auto-approve -var-file=${{ var.CONFIGURATION_ENVIRONMENT_FILE }}
