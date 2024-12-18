@@ -1,9 +1,8 @@
 def call() {
-    sh '''
-        #todo: variable substitution
-       terraform -chdir=terraform/configurations/${bamboo.configuration} init -backend=false
-      terraform -chdir=terraform/configurations/${bamboo.configuration} validate
-    '''
+    sh """
+        terraform -chdir=terraform/configurations/${CONFIGURATION} init -backend=false
+        terraform -chdir=terraform/configurations/${CONFIGURATION} validate
+    """
 }
 
 return this;

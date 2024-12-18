@@ -1,13 +1,12 @@
 def call() {
-    sh '''
-        #todo: variable substitution
+    sh """
         # unhide the imports file temporarily for import-specific task
-        mv terraform/configurations/${bamboo.configuration}/.imports.tf terraform/configurations/${bamboo.configuration}/imports.tf
+        mv terraform/configurations/${CONFIGURATION}/.imports.tf terraform/configurations/${CONFIGURATION}/imports.tf
 
-        terraform -chdir=terraform/configurations/${bamboo.configuration} refresh -var-file=env/${bamboo.environment}.tfvars
+        terraform -chdir=terraform/configurations/${CONFIGURATION} refresh -var-file=env/${ENVIRONMENT}.tfvars
 
-        mv terraform/configurations/${bamboo.configuration}/imports.tf terraform/configurations/${bamboo.configuration}/.imports.tf
-    '''
+        mv terraform/configurations/${CONFIGURATION}/imports.tf terraform/configurations/${CONFIGURATION}/.imports.tf
+    """
 }
 
 return this;
