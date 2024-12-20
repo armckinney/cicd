@@ -1,6 +1,9 @@
 def call() {
-    dockerBuildPush = load 'ci/steps/docker-build-push.groovy'
-    dockerBuildPush()
+    dockerBuild = load 'ci/steps/docker-build.groovy'
+    dockerPush = load 'ci/steps/docker-push.groovy'
+
+    dockerBuild()
+    dockerPush()
 }
 
 return this;

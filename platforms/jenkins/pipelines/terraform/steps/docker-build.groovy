@@ -1,9 +1,8 @@
 def call(String dockerfilePath, String containerRegistryName, String repositoryName, String branchName) {
     sh '''
-        # todo: variables substitution
         docker buildx build \
-            --file ${dockerfilePath} \
-            --tag ${containerRegistryName}/${repositoryName}:${branchName} \
+            --file ${DOCKERFILE_PATH} \
+            --tag ${CONTAINER_REGISTRY_NAME}/${REPOSITORY_NAME}:${BRANCH_NAME} \
             .  
     '''
 }

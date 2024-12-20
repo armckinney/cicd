@@ -2,7 +2,7 @@
 
 terraformPipeline(
     awsAccountId: '1234567890', 
-    configuration: 'exmaple', 
+    configuration: 'example', 
     environment: 'dev', 
-    pipelineToken: 'myreponame-mypipelinename'
+    pipelineToken: 'myreponame-branchstrategy'
 )

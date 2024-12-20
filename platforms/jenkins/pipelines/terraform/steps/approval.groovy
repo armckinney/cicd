@@ -1,6 +1,5 @@
 def call() {
-    buildUser = currentBuild.rawBuild.getCause(Cause.UserIdCause).getUserId()
-    echo "Terraform Plan Approved by: ${buildUser}"
+    echo "Terraform Plan Approved by: ${APPROVAL_SUBMITTER}"
 }
 
 return this;
