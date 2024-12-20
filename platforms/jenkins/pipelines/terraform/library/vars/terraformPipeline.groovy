@@ -21,7 +21,7 @@ def call(Map pipelineParams) {
             DOCKERFILE_PATH = '.devcontainer/Dockerfile'
             CONTAINER_REGISTRY_SERVER = 'docker.io'
             CONTAINER_REGISTRY_NAME = "${env.CONTAINER_REGISTRY_SERVER}/mysubdirectory"
-            CONTAINER_REGISTRY_CREDENTIALS_ID = 'ContainerRegistryCredentials'
+            CONTAINER_REGISTRY_CREDENTIALS = credentials('my-container-registry-credentials')
             KUBERNETES_DEVCONTAINER_CONFIG = readFile('ci/library/resources/armckinney/platform/kubernetes-devcontainer-config.yaml'
                 ).replace('$CONTAINER_IMAGE', "${env.CONTAINER_REGISTRY_NAME}/${env.REPOSITORY_NAME}:${env.BRANCH_NAME}")
 
@@ -113,6 +113,110 @@ def call(Map pipelineParams) {
                             script {
                                 terraformSecurity = load 'ci/stages/terraform-security.groovy'
                                 terraformSecurity()
+                            }
+                        }
+                    }
+                }
+            }
+
+            stage('terraform-plan') {
+                agent {
+                    kubernetes {
+                        yaml env.KUBERNETES_DEVCONTAINER_CONFIG
+                        defaultContainer 'devcontainer'
+                    }
+                }
+                steps {
+                    script {
+                        terraformPlan = load 'ci/stages/terraform-plan.groovy'
+                        terraformPlan()
+                    }
+                }
+            }
+
+            stage('terraform-plan-approval') {
+                agent {
+                    label 'k8s-jenkins-slave'
+                }
+                input {
+                    message 'Do you approve the terraform plan?'
+                    ok 'Yes, I approve.'
+                    submitterParameter 'APPROVAL_SUBMITTER'
+                }
+                options {
+                    timeout(time: 1, unit: 'HOURS')
+                    skipDefaultCheckout true
+                }
+                steps {
+                    script {
+                        terraformPlanApproval = load 'ci/stages/approval.groovy'
+                        terraformPlanApproval()
+                    }
+                }
+            }
+
+            stage('terraform-action') {
+                parallel {
+                    stage('terraform-apply') {
+                        agent {
+                            kubernetes {
+                                yaml env.KUBERNETES_DEVCONTAINER_CONFIG
+                                defaultContainer 'devcontainer'
+                            }
+                        }
+                        input {
+                            message 'Run Terraform Apply?'
+                            ok 'Yes, apply the terraform plan.'
+                        }
+                        options {
+                            timeout(time: 15, unit: 'MINUTES')
+                        }
+                        steps {
+                            script {
+                                terraformApply = load 'ci/stages/terraform-apply.groovy'
+                                terraformApply()
+                            }
+                        }
+                    }
+                    stage('terraform-show') {
+                        agent {
+                            kubernetes {
+                                yaml env.KUBERNETES_DEVCONTAINER_CONFIG
+                                defaultContainer 'devcontainer'
+                            }
+                        }
+                        input {
+                            message 'Run Terraform Show?'
+                            ok 'Yes, show the current infrastructure.'
+                        }
+                        options {
+                            timeout(time: 15, unit: 'MINUTES')
+                        }
+                        steps {
+                            script {
+                                terraformShow = load 'ci/stages/terraform-show.groovy'
+                                terraformShow()
+                            }
+                        }
+                    }
+                    stage('terraform-destroy') {
+                        agent {
+                            kubernetes {
+                                yaml env.KUBERNETES_DEVCONTAINER_CONFIG
+                                defaultContainer 'devcontainer'
+                            }
+                        }
+                        input {
+                            message 'Run Terraform Destroy?'
+                            ok 'Yes, destroy ALL infrastructure in the Terraform configuration.'
+                        }
+                        options {
+                            timeout(time: 15, unit: 'MINUTES')
+                        }
+                        steps {
+                            script {
+                                terraformDestroy = load 'ci/stages/terraform-destroy.groovy'
+                                terraformDestroy()
                             }
                         }
                     }
