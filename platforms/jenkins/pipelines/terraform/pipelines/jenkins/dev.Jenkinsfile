@@ -1,4 +1,4 @@
-@Library('terraform-workflows@main') _ 
+@Library('cicd@main') _ 
 
 terraformPipeline(
     awsAccountId: '1234567890', 

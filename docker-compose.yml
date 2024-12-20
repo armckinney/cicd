@@ -5,6 +5,6 @@ services:
       dockerfile: ./.devcontainer/Dockerfile
       context: ./
     volumes:
-      - .:/workspaces/terraform-workflows:cached
+      - .:/workspaces/cicd:cached
       - ~/.aws:/root/.aws:ro
     command: /bin/sh -c "while sleep 1000; do :; done"

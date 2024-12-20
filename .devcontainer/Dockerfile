@@ -7,7 +7,7 @@ ARG TFLINT_VERSION=0.53.0
 ARG TRIVY_VERSION=0.58.0
 
 # set workspace directory
-ARG WORKSPACE=/workspaces/terraform-workflows
+ARG WORKSPACE=/workspaces/cicd
 ENV WORKSPACE=${WORKSPACE}
 
 # set default AWS_PROFILE if not running on Bamboo

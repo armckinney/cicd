@@ -1,10 +1,10 @@
 {
-	"name": "terraform-workflows",
+	"name": "cicd",
 	"dockerComposeFile": [
 		"../docker-compose.yml"
 	],
 	"service": "dev-container",
-	"workspaceFolder": "/workspaces/terraform-workflows",
+	"workspaceFolder": "/workspaces/cicd",
 	"postCreateCommand": "cd $WORKSPACE/",
 	"customizations": {
 		"vscode": {

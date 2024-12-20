@@ -32,6 +32,6 @@ Project WF
 ]
 
 current:
-- uses: armckinney/terraform-workflows/src/github/workflows/terraform-actions.yaml
+- uses: armckinney/cicd/src/github/workflows/terraform-actions.yaml
 preferred:
 - uses: armckinney/cicd/platforms/github/workflows/terraform-actions.yaml
