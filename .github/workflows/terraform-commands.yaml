@@ -3,10 +3,7 @@
 name: Terraform Commands
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  workflow_call:
 
 jobs:
   terraform:
