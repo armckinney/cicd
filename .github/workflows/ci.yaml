@@ -16,10 +16,10 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: approval
-      uses: ./.github/workflows/approval.yaml
-      with:
-        environment: review
+   approval:
+    runs-on: ubuntu-24.04
+    environment: review
+    uses: ./.github/workflows/approval.yaml
 
     # - name: Login to DockerHub
     #   uses: docker/login-action@v3
