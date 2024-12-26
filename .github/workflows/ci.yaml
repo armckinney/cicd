@@ -16,7 +16,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: test action
+    - name: approval
       uses: ./.github/workflows/approval.yaml
       with:
         environment: review

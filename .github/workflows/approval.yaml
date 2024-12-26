@@ -10,7 +10,7 @@ on:
 
 jobs:
   approval:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
     - name: approval
       uses: ./platforms/github/composite-actions/approval/approval.yaml

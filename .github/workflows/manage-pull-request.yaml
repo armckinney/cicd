@@ -9,7 +9,7 @@ on:
 jobs:
   create_pull_request:
     if: ${{ github.event.action == 'assigned' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout repository
@@ -43,7 +43,7 @@ jobs:
           
   close_pull_request:
     if: ${{ github.event.action == 'closed' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout repository
