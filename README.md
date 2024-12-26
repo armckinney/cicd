@@ -1,2 +1,2 @@
 # cicd
-Terraform GitHub Workflows
+CICD Workflows

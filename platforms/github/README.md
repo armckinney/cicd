@@ -30,8 +30,3 @@ Project WF
     terraform-action / terraform-show
     terraform-action / terraform-destroy
 ]
-
-current:
-- uses: armckinney/cicd/src/github/workflows/terraform-actions.yaml
-preferred:
-- uses: armckinney/cicd/platforms/github/workflows/terraform-actions.yaml
