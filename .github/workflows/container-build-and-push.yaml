@@ -16,6 +16,9 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+
+    - name: ls
+      run: cd ./platforms/github/composite-actions && ls -la
       
     - name: Container build and push
       uses: ./platforms/github/composite-actions/container-build-and-push
