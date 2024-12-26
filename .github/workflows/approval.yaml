@@ -18,6 +18,9 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: ls2
+      run: ls -la
+
     - name: approval
       uses: ./platforms/github/composite-actions/approval/approval.yaml
       with:
