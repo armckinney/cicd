@@ -12,6 +12,12 @@ jobs:
   approval:
     runs-on: ubuntu-24.04
     steps:
+    - name: ls
+      run: ls -la
+      
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
     - name: approval
       uses: ./platforms/github/composite-actions/approval/approval.yaml
       with:
