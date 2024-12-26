@@ -11,7 +11,9 @@ on:
 jobs:
   build-and-push:
     uses: armckinney/cicd/.github/workflows/container-build-and-push.yaml@1-scaffold-project
-    secrets: inherit
+    secrets:
+      DOCKER_HUB_ID: ${{ secrets.DOCKER_HUB_ID }}
+      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
   # build:
   #   runs-on: ubuntu-24.04
