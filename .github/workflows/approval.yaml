@@ -1,0 +1,11 @@
+name: approval
+
+on:
+  workflow_call:
+
+jobs:
+  approval:
+    runs-on: ubuntu-latest
+    steps:
+    - name: approval
+      uses: ./platforms/github/composite-actions/approval/approval.yaml
