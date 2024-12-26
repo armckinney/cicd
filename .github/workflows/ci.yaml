@@ -17,7 +17,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: approval
-      run: ls -la
+      run: cd ./.github/workflows && ls -la
       # uses: ./.github/workflows/approval.yaml
       # with:
       #   environment: review
