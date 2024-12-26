@@ -10,6 +10,12 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: ls
+      run: ls -la
+      
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
     - name: approval
       shell: bash
       environment: ${{ inputs.environment }}
