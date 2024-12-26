@@ -2,12 +2,6 @@ name: container-build-and-push
 
 on:
   workflow_call:
-    inputs:
-      dockerfile:
-        description: 'Name of GitHub environment used for reviews'
-        required: false
-        type: string
-        default: './.devcontainer/Dockerfile'
 
 jobs:
   build-and-push:
