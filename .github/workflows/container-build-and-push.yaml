@@ -1,0 +1,53 @@
+name: approval
+
+on:
+  workflow_call:
+    inputs:
+      dockerfile:
+        description: 'Name of GitHub environment used for reviews'
+        required: false
+        type: string
+        default: './.devcontainer/Dockerfile'
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Login to DockerHub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_HUB_ID }}
+        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+    - name: Access Docker layer cache
+      uses: actions/cache@v4
+      with:
+        path: /tmp/.buildx-cache
+        key: ${{ runner.os }}-buildx-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-buildx-
+
+    - name: Set up Docker Buildx
+      id: buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build from cache and push
+      id: docker_build
+      uses: docker/build-push-action@v6
+      with:
+        context: ./
+        file: ${{ inputs.dockerfile }}
+        builder: ${{ steps.buildx.outputs.name }}
+        tags: ${{ secrets.DOCKER_HUB_ID }}/${{ github.repository }}:${{ github.sha }}
+        cache-from: type=local,src=/tmp/.buildx-cache
+        cache-to: type=local,dest=/tmp/.buildx-cache-new
+        push: true
+
+    - name: Clean cache
+      run: |
+        rm -rf /tmp/.buildx-cache
+        mv /tmp/.buildx-cache-new /tmp/.buildx-cache
