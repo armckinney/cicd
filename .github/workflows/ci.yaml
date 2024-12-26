@@ -10,7 +10,7 @@ on:
 
 jobs:
   build-and-push:
-    uses: armckinney/cicd/.github/workflows/container-build-and-push.yaml@1-scaffold-project
+    uses: armckinney/cicd/platforms/github/workflows/container-build-and-push.yaml@1-scaffold-project
 
   # build:
   #   runs-on: ubuntu-24.04
