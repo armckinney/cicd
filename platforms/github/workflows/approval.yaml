@@ -7,4 +7,5 @@ runs:
   steps:
     - name: Set Greeting
       shell: bash
+      environment: review
       run: echo "Approved by ${{ github.actor }}" # todo: this was supposed to use a composite action
