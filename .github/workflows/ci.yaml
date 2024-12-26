@@ -17,7 +17,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: test action
-      uses: ./.github/workflows/approval.yaml@1-scaffold-project
+      uses: ./.github/workflows/approval.yaml
       with:
         environment: review
 
