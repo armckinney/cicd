@@ -2,6 +2,11 @@ name: approval
 
 on:
   workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+        description: 'Name of GitHub environment used for reviews'
 
 jobs:
   approval:
@@ -9,3 +14,5 @@ jobs:
     steps:
     - name: approval
       uses: ./platforms/github/composite-actions/approval/approval.yaml
+      with:
+        environment: ${{ inputs.environment }}

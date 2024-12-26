@@ -1,9 +1,16 @@
 name: approval
 description: 'Manual approval'
 
+inputs:
+  environment:
+    required: true
+    type: string
+    description: 'Name of GitHub environment used for reviews'
+
 runs:
   using: "composite"
   steps:
     - name: approval
       shell: bash
+      environment: ${{ inputs.environment }}
       run: echo "Approved by ${{ github.actor }}"
