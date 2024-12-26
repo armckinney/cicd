@@ -22,6 +22,6 @@ jobs:
       run: ls -la
 
     - name: approval
-      uses: ./platforms/github/composite-actions/approval/approval.yaml
+      uses: ./platforms/github/composite-actions/approval
       with:
         environment: ${{ inputs.environment }}
