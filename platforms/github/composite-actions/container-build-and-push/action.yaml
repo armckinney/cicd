@@ -53,6 +53,7 @@ runs:
         push: true
 
     - name: Clean cache
+      shell: bash
       run: |
         rm -rf /tmp/.buildx-cache
         mv /tmp/.buildx-cache-new /tmp/.buildx-cache
