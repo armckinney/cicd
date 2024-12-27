@@ -3,7 +3,7 @@
 	"dockerComposeFile": [
 		"../docker-compose.yml"
 	],
-	"service": "dev-container",
+	"service": "devcontainer",
 	"workspaceFolder": "/workspaces/cicd",
 	"postCreateCommand": "cd $WORKSPACE/",
 	"customizations": {
@@ -20,7 +20,8 @@
 				"hashicorp.terraform",
 				"shd101wyy.markdown-preview-enhanced",
 				"janisdd.vscode-edit-csv",
-				"github.vscode-github-actions"
+				"github.vscode-github-actions",
+				"redhat.vscode-yaml"
 			]
 		}
 	}
