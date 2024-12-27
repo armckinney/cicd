@@ -22,10 +22,6 @@ runs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Echo Dockerhub ID
-      shell: bash
-      run: echo ${{ inputs.dockerhub_id }}
-
     - name: Login to DockerHub
       uses: docker/login-action@v3
       with:
@@ -51,7 +47,7 @@ runs:
         context: ./
         file: ${{ inputs.dockerfile }}
         builder: ${{ steps.buildx.outputs.name }}
-        tags: ${{ inputs.dockerhub_id }}/${{ github.repository }}:${{ github.sha }}
+        tags: ${{ inputs.dockerhub_id }}/${{ github.repository_name }}:${{ github.sha }}
         cache-from: type=local,src=/tmp/.buildx-cache
         cache-to: type=local,dest=/tmp/.buildx-cache-new
         push: true
