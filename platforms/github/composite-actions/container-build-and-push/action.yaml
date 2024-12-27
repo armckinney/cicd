@@ -1,20 +1,17 @@
 name: container-build-and-push
-description: 'Build and push container'
+description: "Build and push container"
 
 inputs:
   dockerfile:
-    description: 'Filepath of dockerfile to build and push'
+    description: "Filepath of dockerfile to build and push"
     required: false
-    type: string
-    default: './.devcontainer/Dockerfile'
+    default: "./.devcontainer/Dockerfile"
   dockerhub_id:
-    description: 'DockerHub username'
+    description: "DockerHub username"
     required: true
-    type: string
   dockerhub_access_token:
-    description: 'DockerHub access token'
+    description: "DockerHub access token"
     required: true
-    type: string
 
 runs:
   using: "composite"
