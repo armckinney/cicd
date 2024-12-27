@@ -23,6 +23,7 @@ runs:
       uses: actions/checkout@v4
 
     - name: Echo Dockerhub ID
+      shell: bash
       run: echo ${{ inputs.dockerhub_id }}
 
     - name: Login to DockerHub
