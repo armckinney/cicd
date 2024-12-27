@@ -20,8 +20,7 @@
 				"hashicorp.terraform",
 				"shd101wyy.markdown-preview-enhanced",
 				"janisdd.vscode-edit-csv",
-				"github.vscode-github-actions",
-				"redhat.vscode-yaml"
+				"github.vscode-github-actions"
 			]
 		}
 	}
