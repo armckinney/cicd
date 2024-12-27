@@ -47,7 +47,7 @@ runs:
         context: ./
         file: ${{ inputs.dockerfile }}
         builder: ${{ steps.buildx.outputs.name }}
-        tags: ${{ inputs.dockerhub_id }}/${{ github.repository_name }}:${{ github.sha }}
+        tags: ${{ inputs.dockerhub_id }}/${{ github.event.repository.name }}:${{ github.sha }}
         cache-from: type=local,src=/tmp/.buildx-cache
         cache-to: type=local,dest=/tmp/.buildx-cache-new
         push: true
