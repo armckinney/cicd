@@ -1,6 +1,6 @@
 # Scope: Auto create PR/Branch when an issue's assignie is set & delete Pr/Branch on issue closed
 
-name: manage-pull-request
+name: auto-pull-request
 
 on:
   workflow_call:
