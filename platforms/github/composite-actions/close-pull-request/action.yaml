@@ -1,0 +1,43 @@
+name: close-pull-request
+description: "Auto close pull request"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: GitHub webhook review
+      shell: bash
+      run: |
+        cat << OBJECT
+        ${{ toJson(github) }}
+        OBJECT
+
+    - name: Configuring pull request
+      id: config_pr
+      shell: bash
+      run: |
+        PR_STRING="${{ github.event.issue.number }}-${{ github.event.issue.title }}"
+        PR_TITLE=${PR_STRING// /-}
+        echo ::set-output name=PR_TITLE::${PR_TITLE}
+        echo ${PR_TITLE} > pullrequest.txt
+
+    - name: Identify pull request
+      id: id_pr
+      uses: peter-evans/create-pull-request@v3.8.2
+      with:
+        commit-message: "AutoPR Generated"
+        title: ${{ steps.config_pr.outputs.PR_TITLE }}
+        body: "Resolves #${{ github.event.issue.number }}"
+        labels: AutoPR
+        assignees: ${{ github.event.issue.assignee.login }}
+        branch: ${{ steps.config_pr.outputs.PR_TITLE }}
+        delete-branch: true
+
+    - name: Close pull request
+      uses: peter-evans/close-pull@v1
+      with:
+        pull-request-number: ${{ steps.id_pr.outputs.pull-request-number }}
+        comment: "AutoPR Closed"
+        delete-branch: true

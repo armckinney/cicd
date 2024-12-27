@@ -1,0 +1,9 @@
+name: AutoPullRequest 
+
+on:
+  issues:
+    types: [ assigned, closed ]
+  
+jobs:
+  build-and-push:
+    uses: armckinney/cicd/.github/workflows/manage-pull-request.yaml@1-scaffold-project
