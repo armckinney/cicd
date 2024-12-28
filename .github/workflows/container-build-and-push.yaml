@@ -15,7 +15,7 @@ on:
         value: ${{ jobs.build-and-push.outputs.container_image }}
 
 jobs:
-  build-and-push:
+  container-build-and-push:
     runs-on: ubuntu-24.04
     outputs:
         container_image: ${{ steps.container-build-and-push.outputs.container_image }}
