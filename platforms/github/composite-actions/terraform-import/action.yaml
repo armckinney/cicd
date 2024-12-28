@@ -15,4 +15,10 @@ runs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    # import
+    - name: Terraform import
+      shell: bash
+      run: |
+        # unhide the imports file temporarily for import-specific task
+        mv terraform/configurations/${{ inputs.configuration }}/.imports.tf terraform/configurations/${{ inputs.configuration }}/imports.tf
+        terraform -chdir=terraform/configurations/${{ inputs.configuration }} refresh -var-file=env/${{ inputs.environment }}.tfvars
+        mv terraform/configurations/${{ inputs.configuration }}/imports.tf terraform/configurations/${{ inputs.configuration }}/.imports.tf

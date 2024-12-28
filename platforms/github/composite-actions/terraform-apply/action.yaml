@@ -15,4 +15,7 @@ runs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    # apply
+    - name: Terraform apply
+      shell: bash
+      run: |
+        terraform -chdir=terraform/configurations/${{ inputs.configuration }} apply -auto-approve -var-file=env/${{ inputs.environment }}.tfvars

@@ -4,19 +4,28 @@ on:
   workflow_call:
     secrets:
       DOCKER_HUB_ID:
+        description: "DockerHub username"
         required: true
       DOCKER_HUB_ACCESS_TOKEN:
+        description: "DockerHub access token"
         required: true
+    outputs:
+      container_image:
+        description: "Docker image name"
+        value: ${{ jobs.build-and-push.outputs.container_image }}
 
 jobs:
   build-and-push:
     runs-on: ubuntu-24.04
+    outputs:
+        container_image: ${{ steps.container-build-and-push.outputs.container_image }}
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
 
     - name: Container build and push
+      id: container-build-and-push
       uses: ./platforms/github/composite-actions/container-build-and-push
       with:
         dockerhub_id: ${{ secrets.DOCKER_HUB_ID }}

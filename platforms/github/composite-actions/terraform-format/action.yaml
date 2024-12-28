@@ -5,9 +5,6 @@ inputs:
   configuration:
     description: "Name of the Terraform configuration to analyze"
     required: true
-  environment:
-    description: "Name of the Terraform environment to analyze"
-    required: true
 
 runs:
   using: "composite"
@@ -15,4 +12,7 @@ runs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    # format
+    - name: Terraform format
+      shell: bash
+      run: |
+        terraform -chdir=terraform/configurations/${{ inputs.configuration }} fmt -check

@@ -5,12 +5,14 @@ inputs:
   configuration:
     description: "Name of the Terraform configuration to analyze"
     required: true
-  environment:
-    description: "Name of the Terraform environment to analyze"
-    required: true
 
 runs:
   using: "composite"
   steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+
+    - name: Terraform security
+      shell: bash
+      run: |
+        trivy config --tf-exclude-downloaded-modules --severity HIGH,CRITICAL --exit-code 1 terraform/configurations/${{ inputs.configuration }}

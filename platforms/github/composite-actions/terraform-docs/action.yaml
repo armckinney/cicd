@@ -5,9 +5,6 @@ inputs:
   configuration:
     description: "Name of the Terraform configuration to analyze"
     required: true
-  environment:
-    description: "Name of the Terraform environment to analyze"
-    required: true
 
 runs:
   using: "composite"
@@ -15,4 +12,9 @@ runs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    # docs
+    - name: Terraform docs
+      shell: bash
+      run: |
+        cd terraform/configurations/
+        terraform-docs --output-file TERRAFORM_DOCS.md .
+        cmp ${{ inputs.configuration }}/TERRAFORM_DOCS.md ${{ inputs.configuration }}/README.md

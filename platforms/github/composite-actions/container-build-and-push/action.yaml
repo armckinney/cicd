@@ -12,6 +12,10 @@ inputs:
   dockerhub_access_token:
     description: "DockerHub access token"
     required: true
+outputs:
+  container_image:
+    description: "Container image name"
+    value: ${{ inputs.dockerhub_id }}/${{ github.event.repository.name }}:${{ github.sha }}
 
 runs:
   using: "composite"

@@ -15,4 +15,7 @@ runs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    # destroy
+    - name: Terraform destroy
+      shell: bash
+      run: |
+        terraform -chdir=terraform/configurations/${{ inputs.configuration }} destroy -auto-approve -var-file=env/${{ inputs.environment }}.tfvars
