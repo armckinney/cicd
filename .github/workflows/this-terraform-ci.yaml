@@ -17,9 +17,9 @@ jobs:
     needs: container-build-and-push
     uses: armckinney/cicd/.github/workflows/terraform-static-analysis.yaml@1-scaffold-project
     with:
-      configuration: "todo"
-      environment: "todo"
-      container_image: needs.build-and-push.outputs.container_image
+      configuration: example
+      environment: dev
+      container_image: ${{ needs.container-build-and-push.outputs.container_image }}
 
   # terraform-plan:
     # implement as CA
