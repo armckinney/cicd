@@ -1,0 +1,64 @@
+name: terraform-static-analysis
+
+on:
+  workflow_call:
+    inputs:
+      configuration:
+        description: 'Name of the Terraform configuration to analyze'
+        type: string
+        required: true
+      environment:
+        description: 'Name of the Terraform environment to analyze'
+        type: string
+        required: true
+
+jobs:
+  terraform-format:
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Terraform format 
+      uses: ./platforms/github/composite-actions/terraform-format
+
+  terraform-validate:
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Terraform validate
+      uses: ./platforms/github/composite-actions/terraform-validate
+
+  terraform-docs:
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Terraform docs 
+      uses: ./platforms/github/composite-actions/terraform-docs
+
+  terraform-security:
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Terraform security
+      uses: ./platforms/github/composite-actions/terraform-security
+
+  terraform-lint:
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Terraform lint
+      uses: ./platforms/github/composite-actions/terraform-lint
