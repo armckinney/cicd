@@ -39,7 +39,7 @@ jobs:
     with:
       dockerhub_id: ${{ needs.setup-env.outputs.dockerhub_id }}
     secrets:
-      DOCKERHUB_ACCESS_TOKEN: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
+      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
   static-analysis:
     needs: [container-build-and-push, setup-env]
