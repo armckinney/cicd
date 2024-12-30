@@ -2,8 +2,8 @@ name: terraform-show
 description: "Show Terraform configuration"
 
 inputs:
-  configuration:
-    description: "Name of the Terraform configuration to analyze"
+  tf_configuration_path:
+    description: "Filepath Terraform configuration to analyze"
     required: true
 
 runs:
@@ -15,4 +15,4 @@ runs:
     - name: Terraform show
       shell: bash
       run: |
-        terraform -chdir=terraform/configurations/${{ inputs.configuration }} show
+        terraform -chdir=${{ inputs.tf_configuration_path }} show

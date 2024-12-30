@@ -2,8 +2,8 @@ name: terraform-validate
 description: "Validate Terraform configuration"
 
 inputs:
-  configuration:
-    description: "Name of the Terraform configuration to analyze"
+  tf_configuration_path:
+    description: "Filepath Terraform configuration to analyze"
     required: true
 
 runs:
@@ -15,5 +15,5 @@ runs:
     - name: Terraform validate
       shell: bash
       run: |
-        terraform -chdir=terraform/configurations/${{ inputs.configuration }} init -backend=false
-        terraform -chdir=terraform/configurations/${{ inputs.configuration }} validate
+        terraform -chdir=${{ inputs.tf_configuration_path }} init -backend=false
+        terraform -chdir=${{ inputs.tf_configuration_path }} validate

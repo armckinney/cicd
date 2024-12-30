@@ -2,10 +2,12 @@ name: container-build-and-push
 
 on:
   workflow_call:
-    secrets:
-      DOCKER_HUB_ID:
+    inputs:
+      dockerhub_id: 
         description: "DockerHub username"
+        type: string
         required: true
+    secrets:
       DOCKER_HUB_ACCESS_TOKEN:
         description: "DockerHub access token"
         required: true
@@ -28,5 +30,5 @@ jobs:
       id: container-build-and-push
       uses: ./platforms/github/composite-actions/container-build-and-push
       with:
-        dockerhub_id: ${{ secrets.DOCKER_HUB_ID }}
+        dockerhub_id: ${{ inputs.dockerhub_id }}
         dockerhub_access_token: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}

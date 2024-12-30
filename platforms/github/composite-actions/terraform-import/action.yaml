@@ -2,11 +2,11 @@ name: terraform-import
 description: "Import Terraform configuration infrastructure"
 
 inputs:
-  configuration:
-    description: "Name of the Terraform configuration to analyze"
+  tf_configuration_path:
+    description: "Filepath Terraform configuration to analyze"
     required: true
-  environment:
-    description: "Name of the Terraform environment to analyze"
+  tf_varfile:
+    description: "Terraform environment varfile to analyze"
     required: true
 
 runs:
@@ -19,6 +19,6 @@ runs:
       shell: bash
       run: |
         # unhide the imports file temporarily for import-specific task
-        mv terraform/configurations/${{ inputs.configuration }}/.imports.tf terraform/configurations/${{ inputs.configuration }}/imports.tf
-        terraform -chdir=terraform/configurations/${{ inputs.configuration }} refresh -var-file=env/${{ inputs.environment }}.tfvars
-        mv terraform/configurations/${{ inputs.configuration }}/imports.tf terraform/configurations/${{ inputs.configuration }}/.imports.tf
+        mv ${{ inputs.tf_configuration_path }}/.imports.tf ${{ inputs.tf_configuration_path }}/imports.tf
+        terraform -chdir=${{ inputs.tf_configuration_path }} refresh -var-file=${{ inputs.tf_varfile }}
+        mv ${{ inputs.tf_configuration_path }}/imports.tf ${{ inputs.tf_configuration_path }}/.imports.tf

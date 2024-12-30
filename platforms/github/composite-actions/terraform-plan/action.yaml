@@ -2,11 +2,11 @@ name: terraform-plan
 description: "Plan Terraform configuration"
 
 inputs:
-  configuration:
-    description: "Name of the Terraform configuration to analyze"
+  tf_configuration_path:
+    description: "Filepath Terraform configuration to analyze"
     required: true
-  environment:
-    description: "Name of the Terraform environment to analyze"
+  tf_varfile:
+    description: "Terraform environment varfile to analyze"
     required: true
 
 runs:
@@ -18,4 +18,4 @@ runs:
     - name: Terraform plan
       shell: bash
       run: |
-        terraform -chdir=terraform/configurations/${{ inputs.configuration }} plan -var-file=env/${{ inputs.environment }}.tfvars
+        terraform -chdir=${{ inputs.tf_configuration_path }} plan -var-file=${{ inputs.tf_varfile }}

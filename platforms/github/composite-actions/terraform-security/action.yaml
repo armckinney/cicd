@@ -2,8 +2,8 @@ name: terraform-security
 description: "Check Terraform configuration security"
 
 inputs:
-  configuration:
-    description: "Name of the Terraform configuration to analyze"
+  tf_configuration_path:
+    description: "Filepath Terraform configuration to analyze"
     required: true
 
 runs:
@@ -15,4 +15,4 @@ runs:
     - name: Terraform security
       shell: bash
       run: |
-        trivy config --tf-exclude-downloaded-modules --severity HIGH,CRITICAL --exit-code 1 terraform/configurations/${{ inputs.configuration }}
+        trivy config --tf-exclude-downloaded-modules --severity HIGH,CRITICAL --exit-code 1 ${{ inputs.tf_configuration_path}}

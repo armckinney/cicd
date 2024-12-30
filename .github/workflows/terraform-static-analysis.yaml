@@ -3,16 +3,16 @@ name: terraform-static-analysis
 on:
   workflow_call:
     inputs:
-      configuration:
-        description: 'Name of the Terraform configuration to analyze'
-        type: string
-        required: true
-      environment:
-        description: 'Name of the Terraform environment to analyze'
-        type: string
-        required: true
       container_image:
         description: 'Container image name'
+        type: string
+        required: true
+      tf_configuration_path:
+        description: 'Filepath Terraform configuration to analyze'
+        type: string
+        required: true
+      tf_varfile:
+        description: 'Terraform environment varfile to analyze'
         type: string
         required: true
 
@@ -36,7 +36,7 @@ jobs:
     - name: Terraform format 
       uses: ./platforms/github/composite-actions/terraform-format
       with:
-        configuration: ${{ inputs.configuration }}
+        tf_configuration_path: ${{ inputs.tf_configuration_path }}
 
   terraform-validate:
     runs-on: ubuntu-24.04
@@ -50,7 +50,7 @@ jobs:
     - name: Terraform validate
       uses: ./platforms/github/composite-actions/terraform-validate
       with:
-        configuration: ${{ inputs.configuration }}
+        tf_configuration_path: ${{ inputs.tf_configuration_path }}
 
   terraform-docs:
     runs-on: ubuntu-24.04
@@ -64,7 +64,7 @@ jobs:
     - name: Terraform docs 
       uses: ./platforms/github/composite-actions/terraform-docs
       with:
-        configuration: ${{ inputs.configuration }}
+        tf_configuration_path: ${{ inputs.tf_configuration_path }}
 
   terraform-security:
     runs-on: ubuntu-24.04
@@ -78,7 +78,7 @@ jobs:
     - name: Terraform security
       uses: ./platforms/github/composite-actions/terraform-security
       with:
-        configuration: ${{ inputs.configuration }}
+        tf_configuration_path: ${{ inputs.tf_configuration_path }}
 
   terraform-lint:
     runs-on: ubuntu-24.04
@@ -92,5 +92,5 @@ jobs:
     - name: Terraform lint
       uses: ./platforms/github/composite-actions/terraform-lint
       with:
-        configuration: ${{ inputs.configuration }}
-        environment: ${{ inputs.environment }}
+        tf_configuration_path: ${{ inputs.tf_configuration_path }}
+        tf_varfile: ${{ inputs.tf_varfile }}

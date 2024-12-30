@@ -2,8 +2,8 @@ name: terraform-docs
 description: "Check Terraform configuration documentation"
 
 inputs:
-  configuration:
-    description: "Name of the Terraform configuration to analyze"
+  tf_configuration_path:
+    description: "Filepath Terraform configuration to analyze"
     required: true
 
 runs:
@@ -15,6 +15,5 @@ runs:
     - name: Terraform docs
       shell: bash
       run: |
-        cd terraform/configurations/
-        terraform-docs --output-file TERRAFORM_DOCS.md .
-        cmp ${{ inputs.configuration }}/TERRAFORM_DOCS.md ${{ inputs.configuration }}/README.md
+        terraform-docs --output-file TERRAFORM_DOCS.md terraform/configurations/
+        cmp ${{ inputs.tf_configuration_path }}/TERRAFORM_DOCS.md ${{ inputs.tf_configuration_path }}/README.md

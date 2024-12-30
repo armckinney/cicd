@@ -2,8 +2,8 @@ name: terraform-lint
 description: "Lint Terraform configuration"
 
 inputs:
-  configuration:
-    description: "Name of the Terraform configuration to analyze"
+  tf_configuration_path:
+    description: "Filepath Terraform configuration to analyze"
     required: true
 
 runs:
@@ -15,4 +15,4 @@ runs:
     - name: Terraform lint
       shell: bash
       run: |
-        tflint -chdir=terraform/configurations/${{ inputs.configuration }}
+        tflint -chdir=${{ inputs.tf_configuration_path}}

@@ -2,8 +2,8 @@ name: terraform-format
 description: "Check Terraform configuration formatting"
 
 inputs:
-  configuration:
-    description: "Name of the Terraform configuration to analyze"
+  tf_configuration_path:
+    description: "Filepath Terraform configuration to analyze"
     required: true
 
 runs:
@@ -15,4 +15,4 @@ runs:
     - name: Terraform format
       shell: bash
       run: |
-        terraform -chdir=terraform/configurations/${{ inputs.configuration }} fmt -check
+        terraform -chdir=${{ inputs.tf_configuration_path }} fmt -check
