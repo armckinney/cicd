@@ -12,7 +12,7 @@ on:
     outputs:
       container_image:
         description: "Docker image name"
-        value: ${{ jobs.build-and-push.outputs.container_image }}
+        value: ${{ jobs.container-build-and-push.outputs.container_image }}
 
 jobs:
   container-build-and-push:
