@@ -17,13 +17,6 @@ on:
         required: true
 
 jobs:
-  echo-container-image:
-    runs-on: ubuntu-24.04
-
-    steps:
-    - name: Echo container image
-      run: echo ${{ inputs.container_image }}
-
   terraform-format:
     runs-on: ubuntu-24.04
     container:

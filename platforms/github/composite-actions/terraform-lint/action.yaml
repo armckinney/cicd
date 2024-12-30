@@ -5,6 +5,9 @@ inputs:
   tf_configuration_path:
     description: "Filepath Terraform configuration to analyze"
     required: true
+  tf_varfile:
+    description: "Terraform environment varfile to analyze"
+    required: true
 
 runs:
   using: "composite"
@@ -15,4 +18,4 @@ runs:
     - name: Terraform lint
       shell: bash
       run: |
-        tflint -chdir=${{ inputs.tf_configuration_path}}
+        tflint --chdir=${{ inputs.tf_configuration_path }} --minimum-failure-severity=error --var-file=${{ inputs.tf_varfile }}
