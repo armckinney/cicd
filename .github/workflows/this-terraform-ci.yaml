@@ -49,10 +49,23 @@ jobs:
       tf_configuration_path: ${{ needs.setup-env.outputs.tf_configuration_path }}
       tf_varfile: ${{ needs.setup-env.outputs.tf_varfile }}
 
-  # terraform-plan:
-    # implement as CA
+  terraform-plan:
+    needs: [container-build-and-push, setup-env]
+    runs-on: ubuntu-24.04
+    container:
+      image: ${{ needs.container-build-and-push.outputs.container_image }}
 
-  # terreaform-commands:
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Terraform lint
+      uses: ./platforms/github/composite-actions/terraform-plan
+      with:
+        tf_configuration_path: ${{ needs.setup-env.outputs.tf_configuration_path }}
+        tf_varfile: ${{ needs.setup-env.outputs.tf_varfile }}
+
+  # terreaform-commands: todo
     # needs an environment for review
   #   uses: armckinney/cicd/.github/workflows/terraform-commands.yaml@1-scaffold-project
   #   with:
