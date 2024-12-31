@@ -1,6 +1,8 @@
-script: 
+script:
   description: Validate Terraform Documentation
   interpreter: SHELL
-  scripts: 
+  scripts:
     - |-
-      [ -f "${bamboo.configurationDirectory}/README.md" ] || { echo "${bamboo.configurationDirectory}/README.md NOT FOUND" ; exit 1 ;}
+      # run terraform-docs using config file and compare validation to repository README
+        terraform-docs --output-file TERRAFORM_DOCS.md terraform/configurations/
+        cmp "${bamboo.configurationDirectory}/TFDOCS_VALIDATION.md" "${bamboo.configurationDirectory}/README.md"
