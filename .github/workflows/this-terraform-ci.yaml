@@ -51,7 +51,7 @@ jobs:
 
 
   terraform-plan:
-    needs: [container-build-and-push, setup-env]
+    needs: [container-build-and-push, setup-env, static-analysis]
     uses: armckinney/cicd/.github/workflows/terraform-plan.yaml@1-scaffold-project
     with:
       container_image: ${{ needs.container-build-and-push.outputs.container_image }}
