@@ -19,5 +19,3 @@ variable "file_type" {
     error_message = "Given value for variable `file_type` not in allowable range."
   }
 }
-
-todo
