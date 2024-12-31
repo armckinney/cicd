@@ -8,6 +8,9 @@ inputs:
   tf_varfile:
     description: "Terraform environment varfile to analyze"
     required: true
+  tf_backend_config:
+    description: "Terraform environment backend config"
+    required: true
 
 runs:
   using: "composite"
