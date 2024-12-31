@@ -18,4 +18,5 @@ runs:
     - name: Terraform plan
       shell: bash
       run: |
+        terraform -chdir=${{ inputs.tf_configuration_path }} init # todo: remove
         terraform -chdir=${{ inputs.tf_configuration_path }} plan -var-file=${{ inputs.tf_varfile }}
