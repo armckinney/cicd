@@ -49,7 +49,6 @@ jobs:
       tf_configuration_path: ${{ needs.setup-env.outputs.tf_configuration_path }}
       tf_varfile: ${{ needs.setup-env.outputs.tf_varfile }}
 
-
   terraform-plan:
     needs: [container-build-and-push, setup-env, static-analysis]
     uses: armckinney/cicd/.github/workflows/terraform-plan.yaml@1-scaffold-project
@@ -59,7 +58,22 @@ jobs:
       tf_varfile: ${{ needs.setup-env.outputs.tf_varfile }}
       tf_backend_config: ${{ needs.setup-env.outputs.tf_backend_config }}
 
-  # terreaform-commands: todo
+    # runs-on: ubuntu-24.04
+    # container:
+    #   image: ${{ needs.container-build-and-push.outputs.container_image }}
+
+    # steps:
+    # - name: Checkout repository
+    #   uses: actions/checkout@v4
+
+    # - name: Terraform plan
+    #   uses: ./platforms/github/composite-actions/terraform-plan
+    #   with:
+    #     tf_configuration_path: ${{ needs.setup-env.outputs.tf_configuration_path }}
+    #     tf_varfile: ${{ needs.setup-env.outputs.tf_varfile }}
+    #     tf_backend_config: ${{ needs.setup-env.outputs.tf_backend_config }}
+
+  # terreaform-actions:
     # needs an environment for review
   #   uses: armckinney/cicd/.github/workflows/terraform-commands.yaml@1-scaffold-project
   #   with:

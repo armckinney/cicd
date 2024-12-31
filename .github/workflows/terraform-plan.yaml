@@ -29,15 +29,10 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-    
-    - name: Terraform init 
-      uses: ./platforms/github/composite-actions/terraform-init
-      with:
-        tf_configuration_path: ${{ inputs.tf_configuration_path }}
-        tf_backend_config: ${{ inputs.tf_backend_config }}
 
     - name: Terraform plan
       uses: ./platforms/github/composite-actions/terraform-plan
       with:
         tf_configuration_path: ${{ inputs.tf_configuration_path }}
         tf_varfile: ${{ inputs.tf_varfile }}
+        tf_backend_config: ${{ inputs.tf_backend_config }}
