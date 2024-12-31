@@ -1,6 +1,4 @@
-# apply, show, destroy
-
-name: Terraform Commands
+name: terraform-actions
 
 on:
   workflow_call:
