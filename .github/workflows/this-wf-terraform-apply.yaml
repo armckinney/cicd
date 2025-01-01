@@ -2,6 +2,9 @@ name: wf-terraform-apply
 
 env:
   DOCKERHUB_ID: 'armck'
+  TF_CONFIGURATION_PATH: ${{ inputs.tf_configuration_path }}
+  TF_VARFILE: ${{ inputs.tf_varfile }}
+  TF_BACKEND_CONFIG: ${{ inputs.tf_backend_config }}
 
 on:
   workflow_dispatch:
@@ -11,19 +14,19 @@ on:
         required: true
         type: choice
         options:
-        - terraform/configurations/example
+        - 'terraform/configurations/example'
       tf_varfile:
         description: 'Terraform environment varfile to analyze'
         required: true
         type: choice
         options:
-        - env/dev.tfvars
+        - 'env/dev.tfvars'
       tf_backend_config:
         description: "Terraform environment backend config"
         required: true
         type: choice
         options:
-        - env/dev.tfbackend
+        - 'env/dev.tfbackend'
 
 defaults:
   run:

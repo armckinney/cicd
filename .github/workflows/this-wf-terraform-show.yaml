@@ -72,5 +72,4 @@ jobs:
       review_environment: review
       container_image: ${{ needs.container-build-and-push.outputs.container_image }}
       tf_configuration_path: ${{ needs.setup-env.outputs.tf_configuration_path }}
-      tf_varfile: ${{ needs.setup-env.outputs.tf_varfile }}
       tf_backend_config: ${{ needs.setup-env.outputs.tf_backend_config }}
