@@ -1,0 +1,43 @@
+name: terraform-apply
+
+on:
+  workflow_call:
+    inputs:
+      review_environment:
+        description: 'Name of the Github environment for review approvals'
+        type: string
+        required: true
+      container_image:
+        description: 'Container image name'
+        type: string
+        required: true
+      tf_configuration_path:
+        description: 'Filepath Terraform configuration to analyze'
+        type: string
+        required: true
+      tf_varfile:
+        description: 'Terraform environment varfile to analyze'
+        type: string
+        required: true
+      tf_backend_config:
+        description: "Terraform environment backend config"
+        type: string
+        required: true
+
+jobs:
+  terraform-apply:
+    runs-on: ubuntu-24.04
+    environment: ${{ inputs.review_environment }}
+    container:
+      image: ${{ inputs.container_image }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Terraform plan
+      uses: ./platforms/github/composite-actions/terraform-apply
+      with:
+        tf_configuration_path: ${{ inputs.tf_configuration_path }}
+        tf_varfile: ${{ inputs.tf_varfile }}
+        tf_backend_config: ${{ inputs.tf_backend_config }}

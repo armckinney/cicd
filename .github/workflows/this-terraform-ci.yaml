@@ -58,44 +58,12 @@ jobs:
       tf_varfile: ${{ needs.setup-env.outputs.tf_varfile }}
       tf_backend_config: ${{ needs.setup-env.outputs.tf_backend_config }}
 
-  terraform-show:
-    needs: [container-build-and-push, setup-env, terraform-plan]
-    runs-on: ubuntu-24.04
-    environment: review
-    container:
-      image: ${{ needs.container-build-and-push.outputs.container_image }}
-    steps:
-      - name: Terraform Show
-        uses: ./platforms/github/composite-actions/terraform-show
-        with:
-          tf_configuration_path: ${{ needs.setup-env.outputs.tf_configuration_path }}
-          tf_varfile: ${{ needs.setup-env.outputs.tf_varfile }}
-          tf_backend_config: ${{ needs.setup-env.outputs.tf_backend_config }}
-
   terraform-apply:
-    needs: [container-build-and-push, setup-env, terraform-plan]
-    runs-on: ubuntu-24.04
-    environment: review
-    container:
-      image: ${{ needs.container-build-and-push.outputs.container_image }}
-    steps:
-      - name: Terraform Apply
-        uses: ./platforms/github/composite-actions/terraform-apply
-        with:
-          tf_configuration_path: ${{ needs.setup-env.outputs.tf_configuration_path }}
-          tf_varfile: ${{ needs.setup-env.outputs.tf_varfile }}
-          tf_backend_config: ${{ needs.setup-env.outputs.tf_backend_config }}
-  
-  terraform-destroy:
-    needs: [container-build-and-push, setup-env, terraform-plan]
-    runs-on: ubuntu-24.04
-    environment: review
-    container:
-      image: ${{ needs.container-build-and-push.outputs.container_image }}
-    steps:
-      - name: Terraform Destroy
-        uses: ./platforms/github/composite-actions/terraform-destroy
-        with:
-          tf_configuration_path: ${{ needs.setup-env.outputs.tf_configuration_path }}
-          tf_varfile: ${{ needs.setup-env.outputs.tf_varfile }}
-          tf_backend_config: ${{ needs.setup-env.outputs.tf_backend_config }}
+    needs: [container-build-and-push, setup-env, static-analysis]
+    uses: armckinney/cicd/.github/workflows/terraform-apply.yaml@1-scaffold-project
+    with:
+      review_environment: review
+      container_image: ${{ needs.container-build-and-push.outputs.container_image }}
+      tf_configuration_path: ${{ needs.setup-env.outputs.tf_configuration_path }}
+      tf_varfile: ${{ needs.setup-env.outputs.tf_varfile }}
+      tf_backend_config: ${{ needs.setup-env.outputs.tf_backend_config }}
