@@ -1,4 +1,4 @@
-name: TerraformApplyExampleDev
+name: TerraformCIExampleDev
 
 env:
   DOCKERHUB_ID: 'armck'
