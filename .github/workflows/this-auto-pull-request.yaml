@@ -1,4 +1,4 @@
-name: AutoPullRequest 
+name: wf-auto-pullrequest 
 
 on:
   issues:

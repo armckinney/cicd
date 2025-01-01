@@ -1,4 +1,4 @@
-name: TerraformApply
+name: wf-terraform-apply
 
 env:
   DOCKERHUB_ID: 'armck'

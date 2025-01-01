@@ -1,4 +1,4 @@
-name: TerraformShow
+name: wf-terraform-show
 
 env:
   DOCKERHUB_ID: 'armck'

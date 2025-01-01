@@ -1,4 +1,4 @@
-name: TerraformDestroy
+name: wf-terraform-destroy
 
 env:
   DOCKERHUB_ID: 'armck'

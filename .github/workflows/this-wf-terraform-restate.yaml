@@ -1,4 +1,4 @@
-name: TerraformRestate
+name: wf-terraform-restate
 
 env:
   DOCKERHUB_ID: 'armck'
