@@ -5,12 +5,20 @@ inputs:
   tf_configuration_path:
     description: "Filepath Terraform configuration to analyze"
     required: true
+  tf_backend_config:
+    description: "Terraform environment backend config"
+    required: true
 
 runs:
   using: "composite"
   steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+
+    - name: Terraform init
+      shell: bash
+      run: |
+        terraform -chdir=${{ inputs.tf_configuration_path}} init -backend-config=${{ inputs.tf_backend_config }} -reconfigure
 
     - name: Terraform show
       shell: bash

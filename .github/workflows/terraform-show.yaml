@@ -1,0 +1,33 @@
+name: terraform-show
+
+on:
+  workflow_call:
+    inputs:
+      container_image:
+        description: 'Container image name'
+        type: string
+        required: true
+      tf_configuration_path:
+        description: 'Filepath Terraform configuration to analyze'
+        type: string
+        required: true
+      tf_backend_config:
+        description: "Terraform environment backend config"
+        type: string
+        required: true
+
+jobs:
+  terraform-show:
+    runs-on: ubuntu-24.04
+    container:
+      image: ${{ inputs.container_image }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Terraform show
+      uses: ./platforms/github/composite-actions/terraform-show
+      with:
+        tf_configuration_path: ${{ inputs.tf_configuration_path }}
+        tf_backend_config: ${{ inputs.tf_backend_config }}

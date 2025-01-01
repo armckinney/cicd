@@ -1,0 +1,76 @@
+name: TerraformShow
+
+env:
+  DOCKERHUB_ID: 'armck'
+  TF_CONFIGURATION_PATH: ${{ inputs.tf_configuration_path }}
+  TF_VARFILE: ${{ inputs.tf_varfile }}
+  TF_BACKEND_CONFIG: ${{ inputs.tf_backend_config }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      tf_configuration_path:
+        description: 'Filepath Terraform configuration to analyze'
+        required: true
+        type: choice
+        options:
+        - terraform/configurations/example
+      tf_varfile:
+        description: 'Terraform environment varfile to analyze'
+        required: true
+        type: choice
+        options:
+        - env/dev.tfvars
+      tf_backend_config:
+        description: "Terraform environment backend config"
+        required: true
+        type: choice
+        options:
+        - env/dev.tfbackend
+      
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  setup-env:
+    runs-on: ubuntu-24.04
+    outputs:
+        dockerhub_id: ${{ steps.env.outputs.dockerhub_id }}
+        tf_configuration_path: ${{ steps.env.outputs.tf_configuration_path }}
+        tf_varfile: ${{ steps.env.outputs.tf_varfile }}
+        tf_backend_config: ${{ steps.env.outputs.tf_backend_config }}
+    steps:
+      - name: Setup environment variables
+        id: env
+        run: |
+          echo "dockerhub_id=$DOCKERHUB_ID" >> "$GITHUB_OUTPUT"
+          echo "tf_configuration_path=$TF_CONFIGURATION_PATH" >> "$GITHUB_OUTPUT"
+          echo "tf_varfile=$TF_VARFILE" >> "$GITHUB_OUTPUT"
+          echo "tf_backend_config=$TF_BACKEND_CONFIG" >> "$GITHUB_OUTPUT"
+
+  container-build-and-push:
+    uses: armckinney/cicd/.github/workflows/container-build-and-push.yaml@1-scaffold-project
+    needs: setup-env
+    with:
+      dockerhub_id: ${{ needs.setup-env.outputs.dockerhub_id }}
+    secrets:
+      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+  static-analysis:
+    needs: [container-build-and-push, setup-env]
+    uses: armckinney/cicd/.github/workflows/terraform-static-analysis.yaml@1-scaffold-project
+    with:
+      container_image: ${{ needs.container-build-and-push.outputs.container_image }}
+      tf_configuration_path: ${{ needs.setup-env.outputs.tf_configuration_path }}
+      tf_varfile: ${{ needs.setup-env.outputs.tf_varfile }}
+
+  terraform-show:
+    needs: [container-build-and-push, setup-env, static-analysis]
+    uses: armckinney/cicd/.github/workflows/terraform-show.yaml@1-scaffold-project
+    with:
+      review_environment: review
+      container_image: ${{ needs.container-build-and-push.outputs.container_image }}
+      tf_configuration_path: ${{ needs.setup-env.outputs.tf_configuration_path }}
+      tf_varfile: ${{ needs.setup-env.outputs.tf_varfile }}
+      tf_backend_config: ${{ needs.setup-env.outputs.tf_backend_config }}

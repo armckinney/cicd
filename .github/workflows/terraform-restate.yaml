@@ -1,0 +1,52 @@
+name: terraform-restate
+
+on:
+  workflow_call:
+    inputs:
+      container_image:
+        description: 'Container image name'
+        type: string
+        required: true
+      tf_configuration_path:
+        description: 'Filepath Terraform configuration to analyze'
+        type: string
+        required: true
+      tf_varfile:
+        description: 'Terraform environment varfile to analyze'
+        type: string
+        required: true
+      tf_backend_config:
+        description: "Terraform environment backend config"
+        type: string
+        required: true
+
+jobs:
+  destroy-state:
+    runs-on: ubuntu-24.04
+    container:
+      image: ${{ inputs.container_image }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Terraform destroy
+      uses: ./platforms/github/composite-actions/terraform-delete-state #todo: create destroy state
+      with:
+        tf_backend_config: ${{ inputs.tf_backend_config }}
+
+  terraform-import:
+    runs-on: ubuntu-24.04
+    container:
+      image: ${{ inputs.container_image }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Terraform import
+      uses: ./platforms/github/composite-actions/terraform-import
+      with:
+        tf_configuration_path: ${{ inputs.tf_configuration_path }}
+        tf_varfile: ${{ inputs.tf_varfile }}
+        tf_backend_config: ${{ inputs.tf_backend_config }}

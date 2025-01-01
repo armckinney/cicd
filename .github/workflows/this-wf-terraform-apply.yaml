@@ -1,16 +1,32 @@
-name: TerraformCI
+name: TerraformApply
 
 env:
   DOCKERHUB_ID: 'armck'
-  TF_CONFIGURATION_PATH: 'terraform/configurations/example'
-  TF_VARFILE: 'env/dev.tfvars'
-  TF_BACKEND_CONFIG: 'env/dev.tfbackend'
+  TF_CONFIGURATION_PATH: ${{ inputs.tf_configuration_path }}
+  TF_VARFILE: ${{ inputs.tf_varfile }}
+  TF_BACKEND_CONFIG: ${{ inputs.tf_backend_config }}
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      tf_configuration_path:
+        description: 'Filepath Terraform configuration to analyze'
+        required: true
+        type: choice
+        options:
+        - terraform/configurations/example
+      tf_varfile:
+        description: 'Terraform environment varfile to analyze'
+        required: true
+        type: choice
+        options:
+        - env/dev.tfvars
+      tf_backend_config:
+        description: "Terraform environment backend config"
+        required: true
+        type: choice
+        options:
+        - env/dev.tfbackend
 
 defaults:
   run:
@@ -59,7 +75,7 @@ jobs:
       tf_backend_config: ${{ needs.setup-env.outputs.tf_backend_config }}
 
   terraform-apply:
-    needs: [container-build-and-push, setup-env, static-analysis]
+    needs: [container-build-and-push, setup-env, terraform-plan]
     uses: armckinney/cicd/.github/workflows/terraform-apply.yaml@1-scaffold-project
     with:
       review_environment: review
