@@ -7,10 +7,6 @@ on:
         description: 'Dockerhub ID'
         type: string
         required: true
-      container_image:
-        description: 'Container image name'
-        type: string
-        required: true
       configuration:
         description: 'Name of the configuration'
         type: string

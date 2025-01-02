@@ -32,7 +32,7 @@ jobs:
 
   terraform-deployment-ci:
     needs: setup-env
-    uses: armckinney/cicd/.github/workflows/terraform-deployment-ci.yaml@1-scaffold-project
+    uses: armckinney/cicd/.github/workflows/rwf-terraform-deployment-ci.yaml@1-scaffold-project
     strategy:
       matrix:
         environment: ['env/dev.tfvars', 'env/stage.tfvars', 'env/prod.tfvars']
