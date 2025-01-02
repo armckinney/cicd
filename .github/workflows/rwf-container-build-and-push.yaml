@@ -1,25 +1,37 @@
 name: container-build-and-push
-description: "Build and push container"
 
-inputs:
-  dockerfile:
-    description: "Filepath of dockerfile to build and push"
-    required: false
-    default: "./.devcontainer/Dockerfile"
-  dockerhub_id:
-    description: "DockerHub username"
-    required: true
-  dockerhub_access_token:
-    description: "DockerHub access token"
-    required: true
-outputs:
-  container_image:
-    description: "Container image name"
-    value: ${{ inputs.dockerhub_id }}/${{ github.event.repository.name }}:${{ github.head_ref }}
+on:
+  workflow_call:
+    inputs:
+      dockerhub_id: 
+        description: "DockerHub username"
+        type: string
+        required: true
+      dockerfile:
+        description: "Filepath of dockerfile to build and push"
+        type: string
+        required: false
+        default: "./.devcontainer/Dockerfile"
+    secrets:
+      DOCKER_HUB_ACCESS_TOKEN:
+        description: "DockerHub access token"
+        required: true
+    outputs:
+      container_image:
+        description: "Docker image name"
+        value: ${{ jobs.container-build-and-push.outputs.container_image }}
 
-runs:
-  using: "composite"
-  steps:
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  container-build-and-push:
+    runs-on: ubuntu-24.04
+    outputs:
+        container_image: ${{ inputs.dockerhub_id }}/${{ github.event.repository.name }}:${{ github.head_ref }}
+
+    steps:
     - name: Checkout repository
       uses: actions/checkout@v4
 
@@ -27,7 +39,7 @@ runs:
       uses: docker/login-action@v3
       with:
         username: ${{ inputs.dockerhub_id }}
-        password: ${{ inputs.dockerhub_access_token }}
+        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
     - name: Access Docker layer cache
       uses: actions/cache@v4

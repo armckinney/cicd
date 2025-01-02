@@ -1,0 +1,52 @@
+name: terraform-plan
+
+on:
+  workflow_call:
+    inputs:
+      container_image:
+        description: 'Container image name'
+        type: string
+        required: true
+      tf_configuration_path:
+        description: 'Filepath Terraform configuration to analyze'
+        type: string
+        required: true
+      tf_varfile:
+        description: 'Terraform environment varfile to analyze'
+        type: string
+        required: true
+      tf_backend_config:
+        description: "Terraform environment backend config"
+        type: string
+        required: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  terraform-plan:
+    runs-on: ubuntu-24.04
+    container:
+      image: ${{ inputs.container_image }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+  
+      - name: Terraform init
+        run: |
+          terraform -chdir=${{ inputs.tf_configuration_path}} init -backend-config=${{ inputs.tf_backend_config }} -reconfigure
+  
+      - name: Terraform import
+        continue-on-error: true
+        run: |
+          # unhide the imports file temporarily for import-specific task
+          mv ${{ inputs.tf_configuration_path }}/.imports.tf ${{ inputs.tf_configuration_path }}/imports.tf
+          terraform -chdir=${{ inputs.tf_configuration_path }} refresh -var-file=${{ inputs.tf_varfile }}
+          mv ${{ inputs.tf_configuration_path }}/imports.tf ${{ inputs.tf_configuration_path }}/.imports.tf
+  
+      - name: Terraform plan
+        run: |
+          terraform -chdir=${{ inputs.tf_configuration_path }} plan -var-file=${{ inputs.tf_varfile }}
+  

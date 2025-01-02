@@ -1,8 +1,12 @@
-name: terraform-plan
+name: terraform-show
 
 on:
   workflow_call:
     inputs:
+      review_environment:
+        description: 'Name of the Github environment for review approvals'
+        type: string
+        required: true
       container_image:
         description: 'Container image name'
         type: string
@@ -11,18 +15,19 @@ on:
         description: 'Filepath Terraform configuration to analyze'
         type: string
         required: true
-      tf_varfile:
-        description: 'Terraform environment varfile to analyze'
-        type: string
-        required: true
       tf_backend_config:
         description: "Terraform environment backend config"
         type: string
         required: true
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
-  terraform-plan:
+  terraform-show:
     runs-on: ubuntu-24.04
+    environment: ${{ inputs.review_environment }}
     container:
       image: ${{ inputs.container_image }}
 
@@ -30,9 +35,10 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Terraform plan
-      uses: ./platforms/github/composite-actions/terraform-plan
-      with:
-        tf_configuration_path: ${{ inputs.tf_configuration_path }}
-        tf_varfile: ${{ inputs.tf_varfile }}
-        tf_backend_config: ${{ inputs.tf_backend_config }}
+    - name: Terraform init
+      run: |
+        terraform -chdir=${{ inputs.tf_configuration_path}} init -backend-config=${{ inputs.tf_backend_config }} -reconfigure
+
+    - name: Terraform show
+      run: |
+        terraform -chdir=${{ inputs.tf_configuration_path }} show

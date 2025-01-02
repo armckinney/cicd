@@ -16,6 +16,10 @@ on:
         type: string
         required: true
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   terraform-format:
     runs-on: ubuntu-24.04
@@ -25,11 +29,10 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-    
-    - name: Terraform format 
-      uses: ./platforms/github/composite-actions/terraform-format
-      with:
-        tf_configuration_path: ${{ inputs.tf_configuration_path }}
+
+    - name: Terraform format
+      run: |
+        terraform -chdir=${{ inputs.tf_configuration_path }} fmt -check
 
   terraform-validate:
     runs-on: ubuntu-24.04
@@ -41,9 +44,9 @@ jobs:
       uses: actions/checkout@v4
     
     - name: Terraform validate
-      uses: ./platforms/github/composite-actions/terraform-validate
-      with:
-        tf_configuration_path: ${{ inputs.tf_configuration_path }}
+      run: |
+        terraform -chdir=${{ inputs.tf_configuration_path }} init -backend=false
+        terraform -chdir=${{ inputs.tf_configuration_path }} validate
 
   terraform-docs:
     runs-on: ubuntu-24.04
@@ -54,10 +57,10 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
     
-    - name: Terraform docs 
-      uses: ./platforms/github/composite-actions/terraform-docs
-      with:
-        tf_configuration_path: ${{ inputs.tf_configuration_path }}
+    - name: Terraform docs
+      run: |
+        terraform-docs --output-file TERRAFORM_DOCS.md terraform/configurations/
+        cmp ${{ inputs.tf_configuration_path }}/TERRAFORM_DOCS.md ${{ inputs.tf_configuration_path }}/README.md
 
   terraform-security:
     runs-on: ubuntu-24.04
@@ -69,9 +72,8 @@ jobs:
       uses: actions/checkout@v4
     
     - name: Terraform security
-      uses: ./platforms/github/composite-actions/terraform-security
-      with:
-        tf_configuration_path: ${{ inputs.tf_configuration_path }}
+      run: |
+        trivy config --tf-exclude-downloaded-modules --severity HIGH,CRITICAL --exit-code 1 ${{ inputs.tf_configuration_path}}
 
   terraform-lint:
     runs-on: ubuntu-24.04
@@ -83,7 +85,5 @@ jobs:
       uses: actions/checkout@v4
     
     - name: Terraform lint
-      uses: ./platforms/github/composite-actions/terraform-lint
-      with:
-        tf_configuration_path: ${{ inputs.tf_configuration_path }}
-        tf_varfile: ${{ inputs.tf_varfile }}
+      run: |
+        tflint --chdir=${{ inputs.tf_configuration_path }} --minimum-failure-severity=error --var-file=${{ inputs.tf_varfile }}
