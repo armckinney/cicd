@@ -3,6 +3,10 @@ name: terraform-destroy
 on:
   workflow_call:
     inputs:
+      review_environment:
+        description: 'Name of the Github environment for review approvals'
+        type: string
+        required: true
       container_image:
         description: 'Container image name'
         type: string
@@ -23,6 +27,7 @@ on:
 jobs:
   terraform-destroy:
     runs-on: ubuntu-24.04
+    environment: ${{ inputs.review_environment }}
     container:
       image: ${{ inputs.container_image }}
 
