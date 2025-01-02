@@ -1,0 +1,51 @@
+name: terraform-matrix-deployment-ci
+
+on:
+  workflow_call:
+    inputs:
+      container_image:
+        description: 'Container image name'
+        type: string
+        required: true
+      configuration:
+        description: 'Name of the configuration'
+        type: string
+        required: true
+      environment:
+        description: 'Configuration Environment, should be the same for both the backend and GitHub environment'
+        type: string
+        required: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  terraform-lint:
+    runs-on: ubuntu-24.04
+    container:
+      image: ${{ inputs.container_image }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Terraform lint
+      run: |
+        tflint --chdir=terraform/configurations/${{ inputs.configuration }} --minimum-failure-severity=error --var-file=env/${{ inputs.environment }}.tfvars
+    
+  terraform-plan:
+    needs: terraform-lint
+    uses: armckinney/cicd/.github/workflows/rwf-terraform-plan.yaml@1-scaffold-project
+    with:
+      container_image: ${{ inputs.container_image }}
+      configuration: ${{ inputs.configuration }}
+      environment: ${{ inputs.environment }}
+
+  terraform-apply:
+    needs: terraform-plan
+    uses: armckinney/cicd/.github/workflows/rwf-terraform-apply.yaml@1-scaffold-project
+    with:
+      container_image: ${{ inputs.container_image }}
+      configuration: ${{ inputs.configuration }}
+      environment: ${{ inputs.environment }}

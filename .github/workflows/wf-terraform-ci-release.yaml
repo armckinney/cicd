@@ -3,12 +3,9 @@ name: wf-terraform-ci-example-dev
 env:
   DOCKERHUB_ID: 'armck'
   CONFIGURATION: 'example'
-  ENVIRONMENT: 'dev'
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
     branches: [ main ]
 
 defaults:
@@ -21,14 +18,12 @@ jobs:
     outputs:
         dockerhub_id: ${{ steps.env.outputs.dockerhub_id }}
         configuration: ${{ steps.env.outputs.configuration }}
-        environment: ${{ steps.env.outputs.environment }}
     steps:
       - name: Setup environment variables
         id: env
         run: |
           echo "dockerhub_id=$DOCKERHUB_ID" >> "$GITHUB_OUTPUT"
           echo "configuration=$CONFIGURATION" >> "$GITHUB_OUTPUT"
-          echo "environment=$ENVIRONMENT" >> "$GITHUB_OUTPUT"
 
   container-build-and-push:
     needs: setup-env
@@ -72,39 +67,3 @@ jobs:
       container_image: ${{ needs.setup-env.outputs.dockerhub_id }}
       configuration: ${{ needs.setup-env.outputs.configuration }}
       environment: ${{ matrix.environment }}
-
-
-  # container-build-and-push:
-  #   uses: armckinney/cicd/.github/workflows/container-build-and-push.yaml@1-scaffold-project
-  #   needs: setup-env
-  #   with:
-  #     dockerhub_id: ${{ needs.setup-env.outputs.dockerhub_id }}
-  #   secrets:
-  #     DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-
-  # static-analysis:
-  #   needs: [container-build-and-push, setup-env]
-  #   uses: armckinney/cicd/.github/workflows/terraform-static-analysis.yaml@1-scaffold-project
-  #   with:
-  #     container_image: ${{ needs.container-build-and-push.outputs.container_image }}
-  #     configuration: ${{ needs.setup-env.outputs.configuration }}
-  #     environment: ${{ needs.setup-env.outputs.environment }}
-
-  # terraform-plan:
-  #   needs: [container-build-and-push, setup-env, static-analysis]
-  #   uses: armckinney/cicd/.github/workflows/terraform-plan.yaml@1-scaffold-project
-  #   with:
-  #     container_image: ${{ needs.container-build-and-push.outputs.container_image }}
-  #     configuration: ${{ needs.setup-env.outputs.configuration }}
-  #     environment: ${{ needs.setup-env.outputs.environment }}
-  #     tf_backend_config: ${{ needs.setup-env.outputs.tf_backend_config }}
-
-  # terraform-apply:
-  #   needs: [container-build-and-push, setup-env, terraform-plan]
-  #   uses: armckinney/cicd/.github/workflows/terraform-apply.yaml@1-scaffold-project
-  #   with:
-  #     review_environment: review
-  #     container_image: ${{ needs.container-build-and-push.outputs.container_image }}
-  #     configuration: ${{ needs.setup-env.outputs.configuration }}
-  #     environment: ${{ needs.setup-env.outputs.environment }}
-  #     tf_backend_config: ${{ needs.setup-env.outputs.tf_backend_config }}
