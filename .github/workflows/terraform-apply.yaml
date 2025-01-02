@@ -35,7 +35,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Terraform plan
+    - name: Terraform apply
       uses: ./platforms/github/composite-actions/terraform-apply
       with:
         tf_configuration_path: ${{ inputs.tf_configuration_path }}
