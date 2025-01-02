@@ -30,8 +30,18 @@ jobs:
           echo "configuration=$CONFIGURATION" >> "$GITHUB_OUTPUT"
           echo "environment=$ENVIRONMENT" >> "$GITHUB_OUTPUT"
 
-  terraform-deployment-ci:
+  test-terraform-deployment-ci:
     needs: setup-env
+    uses: armckinney/cicd/.github/workflows/rwf-terraform-deployment-ci.yaml@1-scaffold-project
+    with:
+      dockerhub_id: ${{ needs.setup-env.outputs.dockerhub_id }}
+      configuration: ${{ needs.setup-env.outputs.configuration }}
+      environment: 'test'
+    secrets:
+      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+  terraform-deployment-ci:
+    needs: [test-terraform-deployment-ci, setup-env]
     uses: armckinney/cicd/.github/workflows/rwf-terraform-deployment-ci.yaml@1-scaffold-project
     strategy:
       matrix:
