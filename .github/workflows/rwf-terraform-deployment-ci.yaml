@@ -26,7 +26,7 @@ defaults:
 
 jobs:
   container-build-and-push:
-    uses: armckinney/cicd/.github/workflows/container-build-and-push.yaml@1-scaffold-project
+    uses: armckinney/cicd/.github/workflows/rwf-container-build-and-push.yaml@1-scaffold-project
     with:
       dockerhub_id: ${{ inputs.dockerhub_id }}
     secrets:
@@ -34,27 +34,24 @@ jobs:
 
   static-analysis:
     needs: [container-build-and-push]
-    uses: armckinney/cicd/.github/workflows/terraform-static-analysis.yaml@1-scaffold-project
+    uses: armckinney/cicd/.github/workflows/rwf-terraform-static-analysis.yaml@1-scaffold-project
     with:
       container_image: ${{ needs.container-build-and-push.outputs.container_image }}
-      tf_configuration_path: terraform/configurations/${{ inputs.configuration }}
-      tf_varfile: env/${{ inputs.environment }}.tfvars
+      configuration: ${{ inputs.configuration }}
+      environment: ${{ inputs.environment }}
 
   terraform-plan:
     needs: [container-build-and-push, static-analysis]
-    uses: armckinney/cicd/.github/workflows/terraform-plan.yaml@1-scaffold-project
+    uses: armckinney/cicd/.github/workflows/rwf-terraform-plan.yaml@1-scaffold-project
     with:
       container_image: ${{ needs.container-build-and-push.outputs.container_image }}
-      tf_configuration_path: terraform/configurations/${{ inputs.configuration }}
-      tf_varfile: env/${{ inputs.environment }}.tfvars
-      tf_backend_config: env/${{ inputs.environment }}.tfbackend
+      configuration: ${{ inputs.configuration }}
+      environment: ${{ inputs.environment }}
 
   terraform-apply:
     needs: [container-build-and-push, terraform-plan]
-    uses: armckinney/cicd/.github/workflows/terraform-apply.yaml@1-scaffold-project
+    uses: armckinney/cicd/.github/workflows/rwf-terraform-apply.yaml@1-scaffold-project
     with:
-      review_environment: ${{ inputs.environment }}
       container_image: ${{ needs.container-build-and-push.outputs.container_image }}
-      tf_configuration_path: terraform/configurations/${{ inputs.configuration }}
-      tf_varfile: env/${{ inputs.environment }}.tfvars
-      tf_backend_config: env/${{ inputs.environment }}.tfbackend
+      configuration: ${{ inputs.configuration }}
+      environment: ${{ inputs.environment }}
