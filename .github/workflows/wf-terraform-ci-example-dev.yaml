@@ -69,9 +69,12 @@ jobs:
       matrix:
         environment: ['dev', 'test', 'prod']
     with:
+      dockerhub_id: ${{ needs.setup-env.outputs.dockerhub_id }}
       container_image: ${{ needs.setup-env.outputs.dockerhub_id }}
       configuration: ${{ needs.setup-env.outputs.configuration }}
       environment: ${{ matrix.environment }}
+    secrets:
+      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
 
   # container-build-and-push:

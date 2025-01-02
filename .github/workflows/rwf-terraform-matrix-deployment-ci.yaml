@@ -3,6 +3,10 @@ name: terraform-matrix-deployment-ci
 on:
   workflow_call:
     inputs:
+      dockerhub_id:
+        description: 'DockerHub username'
+        type: string
+        required: true
       container_image:
         description: 'Container image name'
         type: string
@@ -15,12 +19,25 @@ on:
         description: 'Configuration Environment, should be the same for both the backend and GitHub environment'
         type: string
         required: true
+    secrets:
+      DOCKER_HUB_ACCESS_TOKEN:
+        description: 'DockerHub access token'
+        required: true
 
 defaults:
   run:
     shell: bash
 
 jobs:
+  docker-login:
+    runs-on: ubuntu-24.04
+    steps:
+    - name: Docker login
+      uses: docker/login-action@v3
+      with:
+        username: ${{ inputs.dockerhub_id }}
+        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
   terraform-lint:
     runs-on: ubuntu-24.04
     container:
