@@ -3,24 +3,16 @@ name: terraform-restate
 on:
   workflow_call:
     inputs:
-      review_environment:
-        description: 'Name of the Github environment for review approvals'
-        type: string
-        required: true
       container_image:
         description: 'Container image name'
         type: string
         required: true
-      tf_configuration_path:
-        description: 'Filepath Terraform configuration to analyze'
+      configuration:
+        description: 'Name of the configuration'
         type: string
         required: true
-      tf_varfile:
-        description: 'Terraform environment varfile to analyze'
-        type: string
-        required: true
-      tf_backend_config:
-        description: "Terraform environment backend config"
+      environment:
+        description: 'Configuration Environment, should be the same for both the backend and GitHub environment'
         type: string
         required: true
 
@@ -31,7 +23,7 @@ defaults:
 jobs:
   delete-state:
     runs-on: ubuntu-24.04
-    environment: ${{ inputs.review_environment }}
+    environment: ${{ inputs.environment }}
     container:
       image: ${{ inputs.container_image }}
 
@@ -39,10 +31,9 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Terraform destroy
-      uses: ./platforms/github/composite-actions/terraform-delete-state #todo: create destroy state
-      with:
-        tf_backend_config: ${{ inputs.tf_backend_config }}
+    - name: Delete Terraform statefile
+      run: |
+        echo todo: delete statefile somehow
 
   terraform-import:
     runs-on: ubuntu-24.04
@@ -55,12 +46,12 @@ jobs:
 
     - name: Terraform init
       run: |
-        terraform -chdir=${{ inputs.tf_configuration_path}} init -backend-config=${{ inputs.tf_backend_config }} -reconfigure
+        terraform -chdir=terraform/configurations/${{ inputs.configuration }} init -backend-config=env/${{ inputs.environment }}.tfbackend -reconfigure
 
     - name: Terraform import
       continue-on-error: true
       run: |
         # unhide the imports file temporarily for import-specific task
-        mv ${{ inputs.tf_configuration_path }}/.imports.tf ${{ inputs.tf_configuration_path }}/imports.tf
-        terraform -chdir=${{ inputs.tf_configuration_path }} refresh -var-file=${{ inputs.tf_varfile }}
-        mv ${{ inputs.tf_configuration_path }}/imports.tf ${{ inputs.tf_configuration_path }}/.imports.tf
+        mv terraform/configurations/${{ inputs.configuration }}/.imports.tf terraform/configurations/${{ inputs.configuration }}/imports.tf
+        terraform -chdir=terraform/configurations/${{ inputs.configuration }} refresh -var-file=env/${{ inputs.environment }}.tfvars
+        mv terraform/configurations/${{ inputs.configuration }}/imports.tf terraform/configurations/${{ inputs.configuration }}/.imports.tf

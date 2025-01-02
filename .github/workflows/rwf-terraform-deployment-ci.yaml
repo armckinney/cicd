@@ -7,27 +7,22 @@ on:
         description: 'Dockerhub ID'
         type: string
         required: true
-      dockerhub_access_token:
-        description: 'Dockerhub access token'
+      container_image:
+        description: 'Container image name'
         type: string
         required: true
-      tf_configuration_path:
-        description: 'Filepath Terraform configuration to analyze'
+      configuration:
+        description: 'Name of the configuration'
         type: string
         required: true
-      tf_varfile:
-        description: 'Terraform environment varfile to analyze'
+      environment:
+        description: 'Configuration Environment, should be the same for both the backend and GitHub environment'
         type: string
         required: true
-      tf_backend_config:
-        description: "Terraform environment backend config"
-        type: string
+    secrets:
+      DOCKER_HUB_ACCESS_TOKEN:
+        description: 'Docker Hub Access Token'
         required: true
-      review_environment:
-        description: 'Name of the Github environment for review approvals'
-        type: string
-        required: false
-        default: 'review'
 
 defaults:
   run:
@@ -39,31 +34,31 @@ jobs:
     with:
       dockerhub_id: ${{ inputs.dockerhub_id }}
     secrets:
-      DOCKER_HUB_ACCESS_TOKEN: ${{ inputs.dockerhub_access_token }}
+      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
   static-analysis:
     needs: [container-build-and-push]
     uses: armckinney/cicd/.github/workflows/terraform-static-analysis.yaml@1-scaffold-project
     with:
       container_image: ${{ needs.container-build-and-push.outputs.container_image }}
-      tf_configuration_path: ${{ inputs.tf_configuration_path }}
-      tf_varfile: ${{ inputs.tf_varfile }}
+      tf_configuration_path: terraform/configurations/${{ inputs.configuration }}
+      tf_varfile: env/${{ inputs.environment }}.tfvars
 
   terraform-plan:
     needs: [container-build-and-push, static-analysis]
     uses: armckinney/cicd/.github/workflows/terraform-plan.yaml@1-scaffold-project
     with:
       container_image: ${{ needs.container-build-and-push.outputs.container_image }}
-      tf_configuration_path: ${{ inputs.tf_configuration_path }}
-      tf_varfile: ${{ inputs.tf_varfile }}
-      tf_backend_config: ${{ inputs.tf_backend_config }}
+      tf_configuration_path: terraform/configurations/${{ inputs.configuration }}
+      tf_varfile: env/${{ inputs.environment }}.tfvars
+      tf_backend_config: env/${{ inputs.environment }}.tfbackend
 
   terraform-apply:
     needs: [container-build-and-push, terraform-plan]
     uses: armckinney/cicd/.github/workflows/terraform-apply.yaml@1-scaffold-project
     with:
-      review_environment: ${{ inputs.review_environment }}
+      review_environment: ${{ inputs.environment }}
       container_image: ${{ needs.container-build-and-push.outputs.container_image }}
-      tf_configuration_path: ${{ inputs.tf_configuration_path }}
-      tf_varfile: ${{ inputs.tf_varfile }}
-      tf_backend_config: ${{ inputs.tf_backend_config }}
+      tf_configuration_path: terraform/configurations/${{ inputs.configuration }}
+      tf_varfile: env/${{ inputs.environment }}.tfvars
+      tf_backend_config: env/${{ inputs.environment }}.tfbackend

@@ -7,12 +7,12 @@ on:
         description: 'Container image name'
         type: string
         required: true
-      tf_configuration_path:
-        description: 'Filepath Terraform configuration to analyze'
+      configuration:
+        description: 'Name of the configuration'
         type: string
         required: true
-      tf_varfile:
-        description: 'Terraform environment varfile to analyze'
+      environment:
+        description: 'Configuration Environment, should be the same for both the backend and GitHub environment'
         type: string
         required: true
 
@@ -32,7 +32,7 @@ jobs:
 
     - name: Terraform format
       run: |
-        terraform -chdir=${{ inputs.tf_configuration_path }} fmt -check
+        terraform -chdir=terraform/configurations/${{ inputs.configuration }} fmt -check
 
   terraform-validate:
     runs-on: ubuntu-24.04
@@ -45,8 +45,8 @@ jobs:
     
     - name: Terraform validate
       run: |
-        terraform -chdir=${{ inputs.tf_configuration_path }} init -backend=false
-        terraform -chdir=${{ inputs.tf_configuration_path }} validate
+        terraform -chdir=terraform/configurations/${{ inputs.configuration }} init -backend=false
+        terraform -chdir=terraform/configurations/${{ inputs.configuration }} validate
 
   terraform-docs:
     runs-on: ubuntu-24.04
@@ -60,7 +60,7 @@ jobs:
     - name: Terraform docs
       run: |
         terraform-docs --output-file TERRAFORM_DOCS.md terraform/configurations/
-        cmp ${{ inputs.tf_configuration_path }}/TERRAFORM_DOCS.md ${{ inputs.tf_configuration_path }}/README.md
+        cmp terraform/configurations/${{ inputs.configuration }}/TERRAFORM_DOCS.md terraform/configurations/${{ inputs.configuration }}/README.md
 
   terraform-security:
     runs-on: ubuntu-24.04
@@ -73,7 +73,7 @@ jobs:
     
     - name: Terraform security
       run: |
-        trivy config --tf-exclude-downloaded-modules --severity HIGH,CRITICAL --exit-code 1 ${{ inputs.tf_configuration_path}}
+        trivy config --tf-exclude-downloaded-modules --severity HIGH,CRITICAL --exit-code 1 terraform/configurations/${{ inputs.configuration }}
 
   terraform-lint:
     runs-on: ubuntu-24.04
@@ -86,4 +86,4 @@ jobs:
     
     - name: Terraform lint
       run: |
-        tflint --chdir=${{ inputs.tf_configuration_path }} --minimum-failure-severity=error --var-file=${{ inputs.tf_varfile }}
+        tflint --chdir=terraform/configurations/${{ inputs.configuration }} --minimum-failure-severity=error --var-file=env/${{ inputs.environment }}.tfvars

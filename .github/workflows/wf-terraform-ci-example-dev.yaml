@@ -2,9 +2,8 @@ name: wf-terraform-ci-example-dev
 
 env:
   DOCKERHUB_ID: 'armck'
-  TF_CONFIGURATION_PATH: 'terraform/configurations/example'
-  TF_VARFILE: 'env/dev.tfvars'
-  TF_BACKEND_CONFIG: 'env/dev.tfbackend'
+  CONFIGURATION: 'example'
+  ENVIRONMENT: 'dev'
 
 on:
   push:
@@ -21,31 +20,26 @@ jobs:
     runs-on: ubuntu-24.04
     outputs:
         dockerhub_id: ${{ steps.env.outputs.dockerhub_id }}
-        tf_configuration_path: ${{ steps.env.outputs.tf_configuration_path }}
-        tf_varfile: ${{ steps.env.outputs.tf_varfile }}
-        tf_backend_config: ${{ steps.env.outputs.tf_backend_config }}
+        configuration: ${{ steps.env.outputs.configuration }}
+        environment: ${{ steps.env.outputs.environment }}
     steps:
       - name: Setup environment variables
         id: env
         run: |
           echo "dockerhub_id=$DOCKERHUB_ID" >> "$GITHUB_OUTPUT"
-          echo "tf_configuration_path=$TF_CONFIGURATION_PATH" >> "$GITHUB_OUTPUT"
-          echo "tf_varfile=$TF_VARFILE" >> "$GITHUB_OUTPUT"
-          echo "tf_backend_config=$TF_BACKEND_CONFIG" >> "$GITHUB_OUTPUT"
+          echo "configuration=$configuration" >> "$GITHUB_OUTPUT"
+          echo "environment=$environment" >> "$GITHUB_OUTPUT"
 
   terraform-deployment-ci:
     needs: setup-env
     uses: armckinney/cicd/.github/workflows/terraform-deployment-ci.yaml@1-scaffold-project
     strategy:
       matrix:
-        tf_varfile: ['env/dev.tfvars', 'env/stage.tfvars', 'env/prod.tfvars']
-        tf_backend_config: ['env/dev.tfbackend', 'env/stage.tfbackend', 'env/prod.tfbackend']
+        environment: ['env/dev.tfvars', 'env/stage.tfvars', 'env/prod.tfvars']
     with:
       dockerhub_id: ${{ needs.setup-env.outputs.dockerhub_id }}
-      tf_configuration_path: ${{ needs.setup-env.outputs.tf_configuration_path }}
-      tf_varfile: ${{ matrix.tf_varfile }}
-      tf_backend_config: ${{ needs.setup-env.outputs.tf_backend_config }}
-      review_environment: review
+      configuration: ${{ needs.setup-env.outputs.configuration }}
+      environment: ${{ matrix.environment }}
     secrets:
       DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
@@ -62,16 +56,16 @@ jobs:
   #   uses: armckinney/cicd/.github/workflows/terraform-static-analysis.yaml@1-scaffold-project
   #   with:
   #     container_image: ${{ needs.container-build-and-push.outputs.container_image }}
-  #     tf_configuration_path: ${{ needs.setup-env.outputs.tf_configuration_path }}
-  #     tf_varfile: ${{ needs.setup-env.outputs.tf_varfile }}
+  #     configuration: ${{ needs.setup-env.outputs.configuration }}
+  #     environment: ${{ needs.setup-env.outputs.environment }}
 
   # terraform-plan:
   #   needs: [container-build-and-push, setup-env, static-analysis]
   #   uses: armckinney/cicd/.github/workflows/terraform-plan.yaml@1-scaffold-project
   #   with:
   #     container_image: ${{ needs.container-build-and-push.outputs.container_image }}
-  #     tf_configuration_path: ${{ needs.setup-env.outputs.tf_configuration_path }}
-  #     tf_varfile: ${{ needs.setup-env.outputs.tf_varfile }}
+  #     configuration: ${{ needs.setup-env.outputs.configuration }}
+  #     environment: ${{ needs.setup-env.outputs.environment }}
   #     tf_backend_config: ${{ needs.setup-env.outputs.tf_backend_config }}
 
   # terraform-apply:
@@ -80,6 +74,6 @@ jobs:
   #   with:
   #     review_environment: review
   #     container_image: ${{ needs.container-build-and-push.outputs.container_image }}
-  #     tf_configuration_path: ${{ needs.setup-env.outputs.tf_configuration_path }}
-  #     tf_varfile: ${{ needs.setup-env.outputs.tf_varfile }}
+  #     configuration: ${{ needs.setup-env.outputs.configuration }}
+  #     environment: ${{ needs.setup-env.outputs.environment }}
   #     tf_backend_config: ${{ needs.setup-env.outputs.tf_backend_config }}
