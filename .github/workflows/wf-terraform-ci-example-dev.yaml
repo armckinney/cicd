@@ -38,73 +38,26 @@ jobs:
     secrets:
       DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-  test-static-analysis:
-    needs: [setup-env, container-build-and-push]
+  static-analysis:
+    needs: [container-build-and-push, setup-env]
     uses: armckinney/cicd/.github/workflows/rwf-terraform-static-analysis.yaml@1-scaffold-project
     with:
       container_image: ${{ needs.container-build-and-push.outputs.container_image }}
       configuration: ${{ needs.setup-env.outputs.configuration }}
-      environment: 'test'
+      environment: ${{ needs.setup-env.outputs.environment }}
 
-  test-terraform-plan:
-    needs: [setup-env, container-build-and-push, test-static-analysis]
+  terraform-plan:
+    needs: [container-build-and-push, setup-env, static-analysis]
     uses: armckinney/cicd/.github/workflows/rwf-terraform-plan.yaml@1-scaffold-project
     with:
       container_image: ${{ needs.container-build-and-push.outputs.container_image }}
       configuration: ${{ needs.setup-env.outputs.configuration }}
-      environment: 'test'
+      environment: ${{ needs.setup-env.outputs.environment }}
 
-  test-terraform-apply:
-    needs: [setup-env, container-build-and-push, test-terraform-plan]
+  terraform-apply:
+    needs: [container-build-and-push, setup-env, terraform-plan]
     uses: armckinney/cicd/.github/workflows/rwf-terraform-apply.yaml@1-scaffold-project
     with:
       container_image: ${{ needs.container-build-and-push.outputs.container_image }}
       configuration: ${{ needs.setup-env.outputs.configuration }}
-      environment: 'test'
-
-  terraform-maxtrix-deployment-ci:
-    needs: [setup-env, container-build-and-push, test-terraform-apply]
-    uses: armckinney/cicd/.github/workflows/rwf-terraform-matrix-deployment-ci.yaml@1-scaffold-project
-    strategy:
-      matrix:
-        environment: ['dev', 'test', 'prod']
-    with:
-      container_image: ${{ needs.container-build-and-push.outputs.container_image }}
-      configuration: ${{ needs.setup-env.outputs.configuration }}
-      environment: ${{ matrix.environment }}
-
-
-  # container-build-and-push:
-  #   uses: armckinney/cicd/.github/workflows/container-build-and-push.yaml@1-scaffold-project
-  #   needs: setup-env
-  #   with:
-  #     dockerhub_id: ${{ needs.setup-env.outputs.dockerhub_id }}
-  #   secrets:
-  #     DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-
-  # static-analysis:
-  #   needs: [container-build-and-push, setup-env]
-  #   uses: armckinney/cicd/.github/workflows/terraform-static-analysis.yaml@1-scaffold-project
-  #   with:
-  #     container_image: ${{ needs.container-build-and-push.outputs.container_image }}
-  #     configuration: ${{ needs.setup-env.outputs.configuration }}
-  #     environment: ${{ needs.setup-env.outputs.environment }}
-
-  # terraform-plan:
-  #   needs: [container-build-and-push, setup-env, static-analysis]
-  #   uses: armckinney/cicd/.github/workflows/terraform-plan.yaml@1-scaffold-project
-  #   with:
-  #     container_image: ${{ needs.container-build-and-push.outputs.container_image }}
-  #     configuration: ${{ needs.setup-env.outputs.configuration }}
-  #     environment: ${{ needs.setup-env.outputs.environment }}
-  #     tf_backend_config: ${{ needs.setup-env.outputs.tf_backend_config }}
-
-  # terraform-apply:
-  #   needs: [container-build-and-push, setup-env, terraform-plan]
-  #   uses: armckinney/cicd/.github/workflows/terraform-apply.yaml@1-scaffold-project
-  #   with:
-  #     review_environment: review
-  #     container_image: ${{ needs.container-build-and-push.outputs.container_image }}
-  #     configuration: ${{ needs.setup-env.outputs.configuration }}
-  #     environment: ${{ needs.setup-env.outputs.environment }}
-  #     tf_backend_config: ${{ needs.setup-env.outputs.tf_backend_config }}
+      environment: ${{ needs.setup-env.outputs.environment }}
