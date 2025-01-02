@@ -63,18 +63,15 @@ jobs:
       environment: 'test'
 
   terraform-maxtrix-deployment-ci:
-    needs: [setup-env, test-terraform-apply]
+    needs: [setup-env, container-build-and-push, test-terraform-apply]
     uses: armckinney/cicd/.github/workflows/rwf-terraform-matrix-deployment-ci.yaml@1-scaffold-project
     strategy:
       matrix:
         environment: ['dev', 'test', 'prod']
     with:
-      dockerhub_id: ${{ needs.setup-env.outputs.dockerhub_id }}
-      container_image: ${{ needs.setup-env.outputs.dockerhub_id }}
+      container_image: ${{ needs.container-build-and-push.outputs.container_image }}
       configuration: ${{ needs.setup-env.outputs.configuration }}
       environment: ${{ matrix.environment }}
-    secrets:
-      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
 
   # container-build-and-push:
