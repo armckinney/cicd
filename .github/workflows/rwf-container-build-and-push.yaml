@@ -29,7 +29,7 @@ jobs:
   container-build-and-push:
     runs-on: ubuntu-24.04
     outputs:
-        container_image: ${{ inputs.dockerhub_id }}/${{ github.event.repository.name }}:${{ github.head_ref }}
+        container_image: ${{ inputs.dockerhub_id }}/${{ github.event.repository.name }}:${{ github.head_ref || github.ref_name }} 
 
     steps:
     - name: Checkout repository
@@ -60,7 +60,7 @@ jobs:
         context: ./
         file: ${{ inputs.dockerfile }}
         builder: ${{ steps.buildx.outputs.name }}
-        tags: ${{ inputs.dockerhub_id }}/${{ github.event.repository.name }}:${{ github.head_ref }}
+        tags: ${{ inputs.dockerhub_id }}/${{ github.event.repository.name }}:${{ github.head_ref || github.ref_name }} 
         cache-from: type=local,src=/tmp/.buildx-cache
         cache-to: type=local,dest=/tmp/.buildx-cache-new
         push: true
