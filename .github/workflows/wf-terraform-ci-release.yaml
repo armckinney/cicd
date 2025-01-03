@@ -27,7 +27,7 @@ jobs:
 
   container-build-and-push:
     needs: setup-env
-    uses: armckinney/cicd/.github/workflows/rwf-container-build-and-push.yaml@1-scaffold-project
+    uses: armckinney/cicd/.github/workflows/rwf-container-build-and-push.yaml@main
     with:
       dockerhub_id: ${{ needs.setup-env.outputs.dockerhub_id }}
     secrets:
@@ -35,7 +35,7 @@ jobs:
 
   test-static-analysis:
     needs: [setup-env, container-build-and-push]
-    uses: armckinney/cicd/.github/workflows/rwf-terraform-static-analysis.yaml@1-scaffold-project
+    uses: armckinney/cicd/.github/workflows/rwf-terraform-static-analysis.yaml@main
     with:
       container_image: ${{ needs.container-build-and-push.outputs.container_image }}
       configuration: ${{ needs.setup-env.outputs.configuration }}
@@ -43,7 +43,7 @@ jobs:
 
   test-terraform-plan:
     needs: [setup-env, container-build-and-push, test-static-analysis]
-    uses: armckinney/cicd/.github/workflows/rwf-terraform-plan.yaml@1-scaffold-project
+    uses: armckinney/cicd/.github/workflows/rwf-terraform-plan.yaml@main
     with:
       container_image: ${{ needs.container-build-and-push.outputs.container_image }}
       configuration: ${{ needs.setup-env.outputs.configuration }}
@@ -51,7 +51,7 @@ jobs:
 
   test-terraform-apply:
     needs: [setup-env, container-build-and-push, test-terraform-plan]
-    uses: armckinney/cicd/.github/workflows/rwf-terraform-apply.yaml@1-scaffold-project
+    uses: armckinney/cicd/.github/workflows/rwf-terraform-apply.yaml@main
     with:
       container_image: ${{ needs.container-build-and-push.outputs.container_image }}
       configuration: ${{ needs.setup-env.outputs.configuration }}
@@ -59,7 +59,7 @@ jobs:
 
   terraform-maxtrix-deployment-ci:
     needs: [setup-env, container-build-and-push, test-terraform-apply]
-    uses: armckinney/cicd/.github/workflows/rwf-terraform-matrix-deployment-ci.yaml@1-scaffold-project
+    uses: armckinney/cicd/.github/workflows/rwf-terraform-matrix-deployment-ci.yaml@main
     strategy:
       matrix:
         environment: ['dev', 'test', 'prod']

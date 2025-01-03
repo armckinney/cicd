@@ -36,7 +36,7 @@ jobs:
     
   terraform-plan:
     needs: terraform-lint
-    uses: armckinney/cicd/.github/workflows/rwf-terraform-plan.yaml@1-scaffold-project
+    uses: armckinney/cicd/.github/workflows/rwf-terraform-plan.yaml@main
     with:
       container_image: ${{ inputs.container_image }}
       configuration: ${{ inputs.configuration }}
@@ -44,7 +44,7 @@ jobs:
 
   terraform-apply:
     needs: terraform-plan
-    uses: armckinney/cicd/.github/workflows/rwf-terraform-apply.yaml@1-scaffold-project
+    uses: armckinney/cicd/.github/workflows/rwf-terraform-apply.yaml@main
     with:
       container_image: ${{ inputs.container_image }}
       configuration: ${{ inputs.configuration }}

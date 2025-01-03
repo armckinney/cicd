@@ -32,7 +32,7 @@ jobs:
 
   container-build-and-push:
     needs: setup-env
-    uses: armckinney/cicd/.github/workflows/rwf-container-build-and-push.yaml@1-scaffold-project
+    uses: armckinney/cicd/.github/workflows/rwf-container-build-and-push.yaml@main
     with:
       dockerhub_id: ${{ needs.setup-env.outputs.dockerhub_id }}
     secrets:
@@ -40,7 +40,7 @@ jobs:
 
   static-analysis:
     needs: [container-build-and-push, setup-env]
-    uses: armckinney/cicd/.github/workflows/rwf-terraform-static-analysis.yaml@1-scaffold-project
+    uses: armckinney/cicd/.github/workflows/rwf-terraform-static-analysis.yaml@main
     with:
       container_image: ${{ needs.container-build-and-push.outputs.container_image }}
       configuration: ${{ needs.setup-env.outputs.configuration }}
@@ -48,7 +48,7 @@ jobs:
 
   terraform-plan:
     needs: [container-build-and-push, setup-env, static-analysis]
-    uses: armckinney/cicd/.github/workflows/rwf-terraform-plan.yaml@1-scaffold-project
+    uses: armckinney/cicd/.github/workflows/rwf-terraform-plan.yaml@main
     with:
       container_image: ${{ needs.container-build-and-push.outputs.container_image }}
       configuration: ${{ needs.setup-env.outputs.configuration }}
@@ -56,7 +56,7 @@ jobs:
 
   terraform-apply:
     needs: [container-build-and-push, setup-env, terraform-plan]
-    uses: armckinney/cicd/.github/workflows/rwf-terraform-apply.yaml@1-scaffold-project
+    uses: armckinney/cicd/.github/workflows/rwf-terraform-apply.yaml@main
     with:
       container_image: ${{ needs.container-build-and-push.outputs.container_image }}
       configuration: ${{ needs.setup-env.outputs.configuration }}
