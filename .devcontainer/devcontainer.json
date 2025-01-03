@@ -1,0 +1,27 @@
+{
+	"name": "cicd",
+	"dockerComposeFile": [
+		"../docker-compose.yml"
+	],
+	"service": "devcontainer",
+	"workspaceFolder": "/workspaces/cicd",
+	"postCreateCommand": "cd $WORKSPACE/",
+	"customizations": {
+		"vscode": {
+			"settings": {
+				"terminal.integrated.profiles.linux": {
+					"bash": {
+						"path": "bash",
+						"icon": "terminal-bash"
+					}
+				}
+			},
+			"extensions": [
+				"hashicorp.terraform",
+				"shd101wyy.markdown-preview-enhanced",
+				"janisdd.vscode-edit-csv",
+				"github.vscode-github-actions"
+			]
+		}
+	}
+}

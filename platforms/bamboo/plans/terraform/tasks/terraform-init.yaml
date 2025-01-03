@@ -1,0 +1,6 @@
+script: 
+  description: Initialize Terraform Configuration
+  interpreter: SHELL
+  scripts: 
+    - |-
+      terraform -chdir=${bamboo.configurationDirectory} init -backend-config=${bamboo.tfbackendFile} -reconfigure

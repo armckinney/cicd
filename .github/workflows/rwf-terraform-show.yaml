@@ -1,0 +1,40 @@
+name: terraform-show
+
+on:
+  workflow_call:
+    inputs:
+      container_image:
+        description: 'Container image name'
+        type: string
+        required: true
+      configuration:
+        description: 'Name of the configuration'
+        type: string
+        required: true
+      environment:
+        description: 'Configuration Environment, should be the same for both the backend and GitHub environment'
+        type: string
+        required: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  terraform-show:
+    runs-on: ubuntu-24.04
+    environment: ${{ inputs.environment }}
+    container:
+      image: ${{ inputs.container_image }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Terraform init
+      run: |
+        terraform -chdir=terraform/configurations/${{ inputs.configuration }} init -backend-config=env/${{ inputs.environment }}.tfbackend -reconfigure
+
+    - name: Terraform show
+      run: |
+        terraform -chdir=terraform/configurations/${{ inputs.configuration }} show

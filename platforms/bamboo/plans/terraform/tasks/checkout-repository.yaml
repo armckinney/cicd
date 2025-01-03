@@ -1,0 +1,3 @@
+checkout: 
+  description: Checkout Default Reponsitory
+  force-clean-build: 'true'

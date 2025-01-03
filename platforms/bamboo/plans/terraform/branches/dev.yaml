@@ -1,0 +1,4 @@
+# for plans that implement development environments
+create: for-new-branch
+delete: never
+link-to-jira: false

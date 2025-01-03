@@ -1,0 +1,1 @@
+This pipeline is a standardized pipeline for Terraform CICD on a Jenkins Kubernetes instance.

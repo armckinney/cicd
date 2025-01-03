@@ -1,0 +1,15 @@
+key: TFPLAN
+description: Generate a Terraform Plan for the Configuration
+docker:
+  image: ${bamboo.containerRegistryName}/${bamboo.planRepository.name}:${bamboo.planRepository.branchName}
+  volumes:
+    ${bamboo.working.directory}: ${bamboo.working.directory}
+    ${bamboo.tmp.directory}: ${bamboo.tmp.directory}
+  docker-run-arguments: []
+tasks:
+  - !include tasks/checkout-repository.yaml
+  - !include tasks/configure-aws-auth.yaml
+  - !include tasks/terraform-init.yaml
+  - !include tasks/terraform-import.yaml
+  - !include tasks/terraform-plan.yaml
+artifact-subscriptions: []

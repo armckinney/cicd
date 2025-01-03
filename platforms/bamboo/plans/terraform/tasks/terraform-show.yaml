@@ -1,0 +1,6 @@
+script: 
+  description: Show Configuration Current Terraform State
+  interpreter: SHELL
+  scripts: 
+    - |-
+      terraform -chdir=${bamboo.configurationDirectory} show 

@@ -1,0 +1,6 @@
+script: 
+  description: Apply Terraform Configuration
+  interpreter: SHELL
+  scripts: 
+    - |-
+      terraform -chdir=${bamboo.configurationDirectory} apply -auto-approve -var-file=${bamboo.tfvarsFile} 

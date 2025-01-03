@@ -1,0 +1,12 @@
+key: TFAPPROVE
+description: Approve the Terraform Plan
+docker:
+  image: ubuntu:22.04
+  volumes:
+    ${bamboo.working.directory}: ${bamboo.working.directory}
+    ${bamboo.tmp.directory}: ${bamboo.tmp.directory}
+  docker-run-arguments: []
+tasks:  
+  - !include tasks/checkout-repository.yaml
+  - !include tasks/approval.yaml
+artifact-subscriptions: []

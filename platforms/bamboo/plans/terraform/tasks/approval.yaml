@@ -1,0 +1,6 @@
+script:
+  description: Log Manual Approval Required to Proceed
+  interpreter: SHELL
+  scripts:
+    - |-
+      echo "Terraform Plan Approved by: ${bamboo.ManualBuildTriggerReason.userName}"

@@ -1,0 +1,6 @@
+script: 
+  description: Analyze Terraform Configuration Security
+  interpreter: SHELL
+  scripts: 
+    - |-
+      trivy config --tf-exclude-downloaded-modules --severity HIGH,CRITICAL --exit-code 1 ${bamboo.configurationDirectory}

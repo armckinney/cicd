@@ -1,0 +1,14 @@
+key: CONTAINER
+description: Build and Push Development Container
+docker:
+  image: docker:27.2.0-dind
+  volumes:
+    "/var/run/docker.sock": "/var/run/docker.sock"
+    ${bamboo.working.directory}: ${bamboo.working.directory}
+    ${bamboo.tmp.directory}: ${bamboo.tmp.directory}
+  docker-run-arguments: []
+tasks:
+  - !include tasks/checkout-repository.yaml
+  - !include tasks/docker-build.yaml
+  - !include tasks/docker-push.yaml
+artifact-subscriptions: []

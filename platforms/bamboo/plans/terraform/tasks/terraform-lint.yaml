@@ -1,0 +1,6 @@
+script:
+  description: Lint Terraform Configuration
+  interpreter: SHELL
+  scripts:
+    - |-
+      tflint --chdir=${bamboo.configurationDirectory} --minimum-failure-severity=error --var-file=${bamboo.tfvarsFile}

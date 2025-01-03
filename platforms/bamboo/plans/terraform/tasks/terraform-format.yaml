@@ -1,0 +1,6 @@
+script: 
+  description: Validate Terraform Formats
+  interpreter: SHELL
+  scripts: 
+    - |-
+      terraform -chdir=${bamboo.configurationDirectory} fmt -check 

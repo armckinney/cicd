@@ -1,0 +1,48 @@
+name: terraform-plan
+
+on:
+  workflow_call:
+    inputs:
+      container_image:
+        description: 'Container image name'
+        type: string
+        required: true
+      configuration:
+        description: 'Name of the configuration'
+        type: string
+        required: true
+      environment:
+        description: 'Configuration Environment, should be the same for both the backend and GitHub environment'
+        type: string
+        required: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  terraform-plan:
+    runs-on: ubuntu-24.04
+    container:
+      image: ${{ inputs.container_image }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+  
+      - name: Terraform init
+        run: |
+          terraform -chdir=terraform/configurations/${{ inputs.configuration }} init -backend-config=env/${{ inputs.environment }}.tfbackend -reconfigure
+  
+      - name: Terraform import
+        continue-on-error: true
+        run: |
+          # unhide the imports file temporarily for import-specific task
+          mv terraform/configurations/${{ inputs.configuration }}/.imports.tf terraform/configurations/${{ inputs.configuration }}/imports.tf
+          terraform -chdir=terraform/configurations/${{ inputs.configuration }} refresh -var-file=env/${{ inputs.environment }}.tfvars
+          mv terraform/configurations/${{ inputs.configuration }}/imports.tf terraform/configurations/${{ inputs.configuration }}/.imports.tf
+  
+      - name: Terraform plan
+        run: |
+          terraform -chdir=terraform/configurations/${{ inputs.configuration }} plan -var-file=env/${{ inputs.environment }}.tfvars
+  

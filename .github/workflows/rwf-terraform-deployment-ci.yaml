@@ -1,0 +1,57 @@
+name: terraform-deployment-ci
+
+on:
+  workflow_call:
+    inputs:
+      dockerhub_id:
+        description: 'Dockerhub ID'
+        type: string
+        required: true
+      configuration:
+        description: 'Name of the configuration'
+        type: string
+        required: true
+      environment:
+        description: 'Configuration Environment, should be the same for both the backend and GitHub environment'
+        type: string
+        required: true
+    secrets:
+      DOCKER_HUB_ACCESS_TOKEN:
+        description: 'Docker Hub Access Token'
+        required: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  container-build-and-push:
+    uses: armckinney/cicd/.github/workflows/rwf-container-build-and-push.yaml@main
+    with:
+      dockerhub_id: ${{ inputs.dockerhub_id }}
+    secrets:
+      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+  static-analysis:
+    needs: [container-build-and-push]
+    uses: armckinney/cicd/.github/workflows/rwf-terraform-static-analysis.yaml@main
+    with:
+      container_image: ${{ needs.container-build-and-push.outputs.container_image }}
+      configuration: ${{ inputs.configuration }}
+      environment: ${{ inputs.environment }}
+
+  terraform-plan:
+    needs: [container-build-and-push, static-analysis]
+    uses: armckinney/cicd/.github/workflows/rwf-terraform-plan.yaml@main
+    with:
+      container_image: ${{ needs.container-build-and-push.outputs.container_image }}
+      configuration: ${{ inputs.configuration }}
+      environment: ${{ inputs.environment }}
+
+  terraform-apply:
+    needs: [container-build-and-push, terraform-plan]
+    uses: armckinney/cicd/.github/workflows/rwf-terraform-apply.yaml@main
+    with:
+      container_image: ${{ needs.container-build-and-push.outputs.container_image }}
+      configuration: ${{ inputs.configuration }}
+      environment: ${{ inputs.environment }}

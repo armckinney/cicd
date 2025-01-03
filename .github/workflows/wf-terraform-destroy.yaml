@@ -1,0 +1,69 @@
+name: wf-terraform-destroy
+
+env:
+  DOCKERHUB_ID: 'armck'
+
+on:
+  workflow_dispatch:
+    inputs:
+      configuration:
+        description: 'Name of the configuration'
+        required: true
+        type: choice
+        options:
+        - example
+      environment:
+        description: 'Configuration Environment, should be the same for both the backend and GitHub environment'
+        required: true
+        type: choice
+        options:
+        - dev
+        - test
+        - prod
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  setup-env:
+    runs-on: ubuntu-24.04
+    outputs:
+      dockerhub_id: ${{ steps.env.outputs.dockerhub_id }}
+    steps:
+      - name: Setup environment variables
+        id: env
+        run: |
+          echo "dockerhub_id=$DOCKERHUB_ID" >> "$GITHUB_OUTPUT"
+
+  container-build-and-push:
+    uses: armckinney/cicd/.github/workflows/rwf-container-build-and-push.yaml@main
+    needs: setup-env
+    with:
+      dockerhub_id: ${{ needs.setup-env.outputs.dockerhub_id }}
+    secrets:
+      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+  static-analysis:
+    needs: [container-build-and-push, setup-env]
+    uses: armckinney/cicd/.github/workflows/rwf-terraform-static-analysis.yaml@main
+    with:
+      container_image: ${{ needs.container-build-and-push.outputs.container_image }}
+      configuration: ${{ inputs.configuration }}
+      environment: ${{ inputs.environment }}
+
+  terraform-show:
+    needs: [container-build-and-push, setup-env, static-analysis]
+    uses: armckinney/cicd/.github/workflows/rwf-terraform-show.yaml@main
+    with:
+      container_image: ${{ needs.container-build-and-push.outputs.container_image }}
+      configuration: ${{ inputs.configuration }}
+      environment: ${{ inputs.environment }}
+
+  terraform-destroy:
+    needs: [container-build-and-push, setup-env, terraform-show]
+    uses: armckinney/cicd/.github/workflows/rwf-terraform-destroy.yaml@main
+    with:
+      container_image: ${{ needs.container-build-and-push.outputs.container_image }}
+      configuration: ${{ inputs.configuration }}
+      environment: ${{ inputs.environment }}

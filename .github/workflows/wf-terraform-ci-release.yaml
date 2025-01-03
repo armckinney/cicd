@@ -1,0 +1,69 @@
+name: wf-terraform-ci-example-dev
+
+env:
+  DOCKERHUB_ID: 'armck'
+  CONFIGURATION: 'example'
+
+on:
+  push:
+    branches: [ main ]
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  setup-env:
+    runs-on: ubuntu-24.04
+    outputs:
+        dockerhub_id: ${{ steps.env.outputs.dockerhub_id }}
+        configuration: ${{ steps.env.outputs.configuration }}
+    steps:
+      - name: Setup environment variables
+        id: env
+        run: |
+          echo "dockerhub_id=$DOCKERHUB_ID" >> "$GITHUB_OUTPUT"
+          echo "configuration=$CONFIGURATION" >> "$GITHUB_OUTPUT"
+
+  container-build-and-push:
+    needs: setup-env
+    uses: armckinney/cicd/.github/workflows/rwf-container-build-and-push.yaml@main
+    with:
+      dockerhub_id: ${{ needs.setup-env.outputs.dockerhub_id }}
+    secrets:
+      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+  test-static-analysis:
+    needs: [setup-env, container-build-and-push]
+    uses: armckinney/cicd/.github/workflows/rwf-terraform-static-analysis.yaml@main
+    with:
+      container_image: ${{ needs.container-build-and-push.outputs.container_image }}
+      configuration: ${{ needs.setup-env.outputs.configuration }}
+      environment: 'test'
+
+  test-terraform-plan:
+    needs: [setup-env, container-build-and-push, test-static-analysis]
+    uses: armckinney/cicd/.github/workflows/rwf-terraform-plan.yaml@main
+    with:
+      container_image: ${{ needs.container-build-and-push.outputs.container_image }}
+      configuration: ${{ needs.setup-env.outputs.configuration }}
+      environment: 'test'
+
+  test-terraform-apply:
+    needs: [setup-env, container-build-and-push, test-terraform-plan]
+    uses: armckinney/cicd/.github/workflows/rwf-terraform-apply.yaml@main
+    with:
+      container_image: ${{ needs.container-build-and-push.outputs.container_image }}
+      configuration: ${{ needs.setup-env.outputs.configuration }}
+      environment: 'test'
+
+  terraform-maxtrix-deployment-ci:
+    needs: [setup-env, container-build-and-push, test-terraform-apply]
+    uses: armckinney/cicd/.github/workflows/rwf-terraform-matrix-deployment-ci.yaml@main
+    strategy:
+      matrix:
+        environment: ['dev', 'test', 'prod']
+    with:
+      container_image: ${{ needs.container-build-and-push.outputs.container_image }}
+      configuration: ${{ needs.setup-env.outputs.configuration }}
+      environment: ${{ matrix.environment }}

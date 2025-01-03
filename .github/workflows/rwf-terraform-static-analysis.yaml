@@ -1,0 +1,89 @@
+name: terraform-static-analysis
+
+on:
+  workflow_call:
+    inputs:
+      container_image:
+        description: 'Container image name'
+        type: string
+        required: true
+      configuration:
+        description: 'Name of the configuration'
+        type: string
+        required: true
+      environment:
+        description: 'Configuration Environment, should be the same for both the backend and GitHub environment'
+        type: string
+        required: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  terraform-format:
+    runs-on: ubuntu-24.04
+    container:
+      image: ${{ inputs.container_image }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Terraform format
+      run: |
+        terraform -chdir=terraform/configurations/${{ inputs.configuration }} fmt -check
+
+  terraform-validate:
+    runs-on: ubuntu-24.04
+    container:
+      image: ${{ inputs.container_image }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Terraform validate
+      run: |
+        terraform -chdir=terraform/configurations/${{ inputs.configuration }} init -backend=false
+        terraform -chdir=terraform/configurations/${{ inputs.configuration }} validate
+
+  terraform-docs:
+    runs-on: ubuntu-24.04
+    container:
+      image: ${{ inputs.container_image }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Terraform docs
+      run: |
+        terraform-docs --output-file TERRAFORM_DOCS.md terraform/configurations/
+        cmp terraform/configurations/${{ inputs.configuration }}/TERRAFORM_DOCS.md terraform/configurations/${{ inputs.configuration }}/README.md
+
+  terraform-security:
+    runs-on: ubuntu-24.04
+    container:
+      image: ${{ inputs.container_image }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Terraform security
+      run: |
+        trivy config --tf-exclude-downloaded-modules --severity HIGH,CRITICAL --exit-code 1 terraform/configurations/${{ inputs.configuration }}
+
+  terraform-lint:
+    runs-on: ubuntu-24.04
+    container:
+      image: ${{ inputs.container_image }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Terraform lint
+      run: |
+        tflint --chdir=terraform/configurations/${{ inputs.configuration }} --minimum-failure-severity=error --var-file=env/${{ inputs.environment }}.tfvars

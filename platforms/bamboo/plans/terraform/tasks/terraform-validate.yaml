@@ -1,0 +1,7 @@
+script: 
+  description: Validate Terraform Configuration
+  interpreter: SHELL
+  scripts: 
+    - |-
+      terraform -chdir=${bamboo.configurationDirectory} init -backend=false
+      terraform -chdir=${bamboo.configurationDirectory} validate

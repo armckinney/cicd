@@ -1,0 +1,13 @@
+formatter: markdown table
+
+version: "v0.18.0"
+
+header-from: main.tf
+
+recursive:
+  enabled: true
+  path: .
+  include-main: false
+
+output:
+  file: README.md

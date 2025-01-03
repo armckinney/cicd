@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
+  labels:
+    app: devcontainer
+spec:
+  containers:
+    - name: devcontainer
+      image: $CONTAINER_IMAGE
+      imagePullPolicy: Always
+      resources:
+        requests:
+          cpu: 1
+          memory: 4Gi
+        limits:
+          memory: 4Gi
+      command:
+        - sleep
+      args:
+        - 99d
+      tty: true
