@@ -1,4 +1,4 @@
-name: wf-terraform-ci-example-dev
+name: wf-terraform-ci-release
 
 env:
   DOCKERHUB_ID: 'armck'
