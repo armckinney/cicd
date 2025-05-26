@@ -15,7 +15,17 @@ on:
         description: 'Configuration Environment, should be the same for both the backend and GitHub environment'
         type: string
         required: true
-
+    secrets:
+      AZURE_CLIENT_ID:
+        description: 'Azure Service Principal Client ID'
+        required: false
+      AZURE_SUBSCRIPTION_ID:
+        description: 'Azure Subscription ID'
+        required: false
+      AZURE_TENANT_ID:
+        description: 'Azure Tenant ID'
+        required: false
+        
 defaults:
   run:
     shell: bash
@@ -41,6 +51,10 @@ jobs:
       container_image: ${{ inputs.container_image }}
       configuration: ${{ inputs.configuration }}
       environment: ${{ inputs.environment }}
+    secrets:
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
 
   terraform-apply:
     needs: terraform-plan
@@ -49,3 +63,7 @@ jobs:
       container_image: ${{ inputs.container_image }}
       configuration: ${{ inputs.configuration }}
       environment: ${{ inputs.environment }}
+    secrets:
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}

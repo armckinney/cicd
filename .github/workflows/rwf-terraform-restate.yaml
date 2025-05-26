@@ -15,6 +15,16 @@ on:
         description: 'Configuration Environment, should be the same for both the backend and GitHub environment'
         type: string
         required: true
+    secrets:
+      AZURE_CLIENT_ID:
+        description: 'Azure Service Principal Client ID'
+        required: false
+      AZURE_SUBSCRIPTION_ID:
+        description: 'Azure Subscription ID'
+        required: false
+      AZURE_TENANT_ID:
+        description: 'Azure Tenant ID'
+        required: false
 
 defaults:
   run:
@@ -28,30 +38,43 @@ jobs:
       image: ${{ inputs.container_image }}
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Delete Terraform statefile
-      run: |
-        echo todo: delete statefile somehow
+      - name: Delete Terraform statefile
+        run: |
+          echo todo: delete statefile somehow
 
   terraform-import:
     runs-on: ubuntu-24.04
     container:
       image: ${{ inputs.container_image }}
 
+    env:
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Terraform init
-      run: |
-        terraform -chdir=terraform/configurations/${{ inputs.configuration }} init -backend-config=env/${{ inputs.environment }}.tfbackend -reconfigure
+      - name: Azure Login
+        if: env.AZURE_CLIENT_ID != '' && env.AZURE_SUBSCRIPTION_ID != '' && env.AZURE_TENANT_ID != ''
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-    - name: Terraform import
-      continue-on-error: true
-      run: |
-        # unhide the imports file temporarily for import-specific task
-        mv terraform/configurations/${{ inputs.configuration }}/.imports.tf terraform/configurations/${{ inputs.configuration }}/imports.tf
-        terraform -chdir=terraform/configurations/${{ inputs.configuration }} refresh -var-file=env/${{ inputs.environment }}.tfvars
-        mv terraform/configurations/${{ inputs.configuration }}/imports.tf terraform/configurations/${{ inputs.configuration }}/.imports.tf
+      - name: Terraform init
+        run: |
+          terraform -chdir=terraform/configurations/${{ inputs.configuration }} init -backend-config=env/${{ inputs.environment }}.tfbackend -reconfigure
+
+      - name: Terraform import
+        continue-on-error: true
+        run: |
+          # unhide the imports file temporarily for import-specific task
+          mv terraform/configurations/${{ inputs.configuration }}/.imports.tf terraform/configurations/${{ inputs.configuration }}/imports.tf
+          terraform -chdir=terraform/configurations/${{ inputs.configuration }} refresh -var-file=env/${{ inputs.environment }}.tfvars
+          mv terraform/configurations/${{ inputs.configuration }}/imports.tf terraform/configurations/${{ inputs.configuration }}/.imports.tf

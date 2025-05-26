@@ -16,9 +16,15 @@ on:
         type: string
         required: true
     secrets:
-      DOCKER_HUB_ACCESS_TOKEN:
-        description: 'Docker Hub Access Token'
-        required: true
+      AZURE_CLIENT_ID:
+        description: 'Azure Service Principal Client ID'
+        required: false
+      AZURE_SUBSCRIPTION_ID:
+        description: 'Azure Subscription ID'
+        required: false
+      AZURE_TENANT_ID:
+        description: 'Azure Tenant ID'
+        required: false
 
 defaults:
   run:
@@ -39,6 +45,10 @@ jobs:
       container_image: ${{ inputs.container_image }}
       configuration: ${{ inputs.configuration }}
       environment: ${{ inputs.environment }}
+    secrets:
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
 
   terraform-apply:
     needs: static-analysis
@@ -47,3 +57,7 @@ jobs:
       container_image: ${{ inputs.container_image }}
       configuration: ${{ inputs.configuration }}
       environment: ${{ inputs.environment }}
+    secrets:
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}

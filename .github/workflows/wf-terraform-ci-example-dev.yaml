@@ -43,5 +43,3 @@ jobs:
       container_image: ${{ needs.container-build-and-push.outputs.container_image }}
       configuration: ${{ needs.setup-env.outputs.configuration }}
       environment: ${{ needs.setup-env.outputs.environment }}
-    secrets:
-      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}

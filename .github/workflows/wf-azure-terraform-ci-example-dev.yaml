@@ -1,12 +1,12 @@
-name: wf-terraform-ci-release
+name: wf-terraform-ci-example-dev
 
 env:
   DOCKERHUB_ID: 'armck'
   CONFIGURATION: 'example'
+  ENVIRONMENT: 'dev'
 
 on:
-  push:
-    branches: [ main ]
+  workflow_dispatch:
 
 defaults:
   run:
@@ -18,12 +18,14 @@ jobs:
     outputs:
         dockerhub_id: ${{ steps.env.outputs.dockerhub_id }}
         configuration: ${{ steps.env.outputs.configuration }}
+        environment: ${{ steps.env.outputs.environment }}
     steps:
       - name: Setup environment variables
         id: env
         run: |
           echo "dockerhub_id=$DOCKERHUB_ID" >> "$GITHUB_OUTPUT"
           echo "configuration=$CONFIGURATION" >> "$GITHUB_OUTPUT"
+          echo "environment=$ENVIRONMENT" >> "$GITHUB_OUTPUT"
 
   container-build-and-push:
     needs: setup-env
@@ -33,21 +35,14 @@ jobs:
     secrets:
       DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-  test-terraform-deployment-ci:
+  terraform-deployment-ci:
     needs: [setup-env, container-build-and-push]
     uses: armckinney/cicd/.github/workflows/rwf-terraform-deployment-ci.yaml@main
     with:
       container_image: ${{ needs.container-build-and-push.outputs.container_image }}
       configuration: ${{ needs.setup-env.outputs.configuration }}
-      environment: 'test'
-
-  terraform-maxtrix-deployment-ci:
-    needs: [setup-env, container-build-and-push, test-terraform-deployment-ci]
-    uses: armckinney/cicd/.github/workflows/rwf-terraform-matrix-deployment-ci.yaml@main
-    strategy:
-      matrix:
-        environment: ['dev', 'test', 'prod']
-    with:
-      container_image: ${{ needs.container-build-and-push.outputs.container_image }}
-      configuration: ${{ needs.setup-env.outputs.configuration }}
-      environment: ${{ matrix.environment }}
+      environment: ${{ needs.setup-env.outputs.environment }}
+    secrets:
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
