@@ -37,13 +37,50 @@ jobs:
     container:
       image: ${{ inputs.container_image }}
 
+    env:
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Azure Login
+        if: env.ARM_CLIENT_ID != '' && env.ARM_SUBSCRIPTION_ID != '' && env.ARM_TENANT_ID != ''
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.ARM_CLIENT_ID }}
+          tenant-id: ${{ secrets.ARM_TENANT_ID }}
+          subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+
+      - name: Terraform init
+        run: |
+          terraform -chdir=terraform/configurations/${{ inputs.configuration }} init -backend-config=env/${{ inputs.environment }}.tfbackend -reconfigure
+
       - name: Delete Terraform statefile
         run: |
-          echo todo: delete statefile somehow
+          # locate the backend type from the configuration
+          backend_type=$(terraform -chdir=terraform/configurations/${{ inputs.configuration }} show -json | jq -r '.backend.type')
+
+          # if backend is local, locate it in the backend config and delete it
+          if [ "$backend_type" = "local" ]; then
+            state_file=$(terraform -chdir=terraform/configurations/${{ inputs.configuration }} show -json | jq -r '.backend.config.path')
+            echo "Deleting local state file: $state_file"
+            rm -f "$state_file"
+          fi
+
+          # if backend is azurerm, locate it in the backend config and delete it
+          if [ "$backend_type" = "azurerm" ]; then
+            resource_group=$(terraform -chdir=terraform/configurations/${{ inputs.configuration }} show -json | jq -r '.backend.config.resource_group_name')
+            storage_account=$(terraform -chdir=terraform/configurations/${{ inputs.configuration }} show -json | jq -r '.backend.config.storage_account_name')
+            container_name=$(terraform -chdir=terraform/configurations/${{ inputs.configuration }} show -json | jq -r '.backend.config.container_name')
+            state_file=$(terraform -chdir=terraform/configurations/${{ inputs.configuration }} show -json | jq -r '.backend.config.key')
+
+            echo "Deleting Azure Storage Blob: $state_file in $container_name of $storage_account in $resource_group"
+            az storage blob delete --account-name "$storage_account" --container-name "$container_name" --name "$state_file" --auth-mode login --only-show-errors
+          fi
+
 
   terraform-import:
     runs-on: ubuntu-24.04
