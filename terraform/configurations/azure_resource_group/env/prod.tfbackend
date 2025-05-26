@@ -1,0 +1,5 @@
+tenant_id            = "347f2394-8211-479a-bf57-2bd755934940"
+subscription_id      = "3af09922-f6bf-46e6-86ea-0d41f2499c90"
+resource_group_name  = "rg-admin-prod"
+storage_account_name = "stadminsprod"
+key                  = "/cicd/azurerg/prod.tfstate"

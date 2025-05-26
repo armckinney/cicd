@@ -2,7 +2,7 @@ name: wf-terraform-ci-example-dev
 
 env:
   DOCKERHUB_ID: 'armck'
-  CONFIGURATION: 'example'
+  CONFIGURATION: 'azurerg'
   ENVIRONMENT: 'dev'
 
 on:
@@ -38,6 +38,19 @@ jobs:
   terraform-deployment-ci:
     needs: [setup-env, container-build-and-push]
     uses: armckinney/cicd/.github/workflows/rwf-terraform-deployment-ci.yaml@main
+    with:
+      container_image: ${{ needs.container-build-and-push.outputs.container_image }}
+      configuration: ${{ needs.setup-env.outputs.configuration }}
+      environment: ${{ needs.setup-env.outputs.environment }}
+    secrets:
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+
+  # note: this is just for testing purposes, it will destroy the resources created by the terraform-deployment-ci job
+  terraform-destroy:
+    needs: [setup-env, container-build-and-push, terraform-deployment-ci]
+    uses: armckinney/cicd/.github/workflows/rwf-terraform-destroy.yaml@main
     with:
       container_image: ${{ needs.container-build-and-push.outputs.container_image }}
       configuration: ${{ needs.setup-env.outputs.configuration }}

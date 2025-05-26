@@ -30,11 +30,16 @@ Usage of the CICD logic defined in this repository can be done via examples in w
 
 ### Containerization
 - [wf-container-build-and-push](../../.github/workflows/wf-container-build-and-push.yaml): build and push images to DockerHub
+  - Secrets Needed: `DOCKER_HUB_ACCESS_TOKEN`
 
 ### Terraform
 
+- [wf-terraform-ci-azurerg-dev](.github/workflows/wf-terraform-ci-azurerg-dev.yaml): run terraform ci pipeline on a single configuration/environment that deploys to azure
+  - Secrets Needed: `DOCKER_HUB_ACCESS_TOKEN`, `AZURE_CLIENT_ID`, `AZURE_SUBSCRIPTION_ID`, `AZURE_TENANT_ID` 
 - [wf-terraform-ci-{configuration}-{environment}](.github/workflows/wf-terraform-ci-example-dev.yaml): run terraform ci pipeline on a single configuration/environment, useful for development branch deployments
+    - Secrets Needed: `DOCKER_HUB_ACCESS_TOKEN`
 - [wf-terraform-ci-release](.github/workflows/wf-terraform-ci-release.yaml): run terraform ci pipeline on a test environment and then release changes to all environments in a matrix implementation on merge to main
+    - Secrets Needed: `DOCKER_HUB_ACCESS_TOKEN`
 - [wf-terraform-apply](.github/workflows/wf-terraform-apply.yaml): run adhoc terraform apply on an input configuration/environment on the main branch
 - [wf-terraform-destroy](.github/workflows/wf-terraform-destroy.yaml): run adhoc terraform destroy on an input configuration/environment on the main branch
 - [wf-terraform-show](.github/workflows/wf-terraform-show.yaml): run adhoc terraform show on an input configuration/environment on the main branch
