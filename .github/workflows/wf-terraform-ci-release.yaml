@@ -33,39 +33,18 @@ jobs:
     secrets:
       DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-  test-static-analysis:
+  test-terraform-deployment-ci:
     needs: [setup-env, container-build-and-push]
-    uses: armckinney/cicd/.github/workflows/rwf-terraform-static-analysis.yaml@main
+    uses: armckinney/cicd/.github/workflows/rwf-terraform-deployment-ci.yaml@main
     with:
       container_image: ${{ needs.container-build-and-push.outputs.container_image }}
       configuration: ${{ needs.setup-env.outputs.configuration }}
       environment: 'test'
-
-  test-terraform-plan:
-    needs: [setup-env, container-build-and-push, test-static-analysis]
-    uses: armckinney/cicd/.github/workflows/rwf-terraform-plan.yaml@main
-    with:
-      container_image: ${{ needs.container-build-and-push.outputs.container_image }}
-      configuration: ${{ needs.setup-env.outputs.configuration }}
-      environment: 'test'
-
-  test-plan-approval:
-    needs: [test-terraform-plan, setup-env]
-    uses: armckinney/cicd/.github/workflows/rwf-manual-approval.yaml@main
-    with:
-      environment: ${{ needs.setup-env.outputs.environment }}
-      message: 'Approval needed for Terraform plan to proceed'
-
-  test-terraform-apply:
-    needs: [setup-env, container-build-and-push, test-terraform-plan, test-plan-approval]
-    uses: armckinney/cicd/.github/workflows/rwf-terraform-apply.yaml@main
-    with:
-      container_image: ${{ needs.container-build-and-push.outputs.container_image }}
-      configuration: ${{ needs.setup-env.outputs.configuration }}
-      environment: 'test'
+    secrets:
+      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
   terraform-maxtrix-deployment-ci:
-    needs: [setup-env, container-build-and-push, test-terraform-apply]
+    needs: [setup-env, test-terraform-deployment-ci]
     uses: armckinney/cicd/.github/workflows/rwf-terraform-matrix-deployment-ci.yaml@main
     strategy:
       matrix:

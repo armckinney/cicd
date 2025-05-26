@@ -3,8 +3,8 @@ name: terraform-deployment-ci
 on:
   workflow_call:
     inputs:
-      dockerhub_id:
-        description: 'Dockerhub ID'
+      container_image:
+        description: 'Container image name'
         type: string
         required: true
       configuration:
@@ -25,33 +25,32 @@ defaults:
     shell: bash
 
 jobs:
-  container-build-and-push:
-    uses: armckinney/cicd/.github/workflows/rwf-container-build-and-push.yaml@main
-    with:
-      dockerhub_id: ${{ inputs.dockerhub_id }}
-    secrets:
-      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-
   static-analysis:
-    needs: [container-build-and-push]
     uses: armckinney/cicd/.github/workflows/rwf-terraform-static-analysis.yaml@main
     with:
-      container_image: ${{ needs.container-build-and-push.outputs.container_image }}
+      container_image: ${{ inputs.container_image }}
       configuration: ${{ inputs.configuration }}
       environment: ${{ inputs.environment }}
 
   terraform-plan:
-    needs: [container-build-and-push, static-analysis]
+    needs: static-analysis
     uses: armckinney/cicd/.github/workflows/rwf-terraform-plan.yaml@main
     with:
-      container_image: ${{ needs.container-build-and-push.outputs.container_image }}
+      container_image: ${{ inputs.container_image }}
       configuration: ${{ inputs.configuration }}
       environment: ${{ inputs.environment }}
 
+  plan-approval:
+    needs: terraform-plan
+    uses: armckinney/cicd/.github/workflows/rwf-manual-approval.yaml@main
+    with:
+      environment: ${{ inputs.environment }}
+      message: 'Approval needed for Terraform plan to proceed'
+
   terraform-apply:
-    needs: [container-build-and-push, terraform-plan]
+    needs: plan-approval
     uses: armckinney/cicd/.github/workflows/rwf-terraform-apply.yaml@main
     with:
-      container_image: ${{ needs.container-build-and-push.outputs.container_image }}
+      container_image: ${{ inputs.container_image }}
       configuration: ${{ inputs.configuration }}
       environment: ${{ inputs.environment }}
