@@ -1,0 +1,49 @@
+name: wf-container-build-and-push
+
+env:
+  DOCKERHUB_ID: 'armck'
+
+on: 
+  workflow_dispatch:
+    inputs:
+      dockerfile:
+        description: "Filepath of dockerfile to build and push"
+        type: string
+        required: false
+        default: "./.devcontainer/Dockerfile"
+      image_name: 
+        description: "Name of the Docker image to build and push"
+        type: string
+        required: false
+        default: cicd
+      image_tag:
+        description: "Tag to use for the Docker image"
+        type: string
+        required: false
+        default: wf-container-build-and-push
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  setup-env:
+    runs-on: ubuntu-24.04
+    outputs:
+        dockerhub_id: ${{ steps.env.outputs.dockerhub_id }}
+    steps:
+      - name: Setup environment variables
+        id: env
+        run: |
+          echo "dockerhub_id=$DOCKERHUB_ID" >> "$GITHUB_OUTPUT"
+    
+  container-build-and-push:
+    needs: setup-env
+    uses: armckinney/cicd/.github/workflows/rwf-container-build-and-push.yaml@main
+    with:
+      dockerhub_id: ${{ needs.setup-env.outputs.dockerhub_id }}
+      dockerfile: ${{ inputs.dockerfile }}
+      image_name: ${{ inputs.image_name }}
+      image_tag: ${{ inputs.image_tag }}
+    secrets:
+      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}

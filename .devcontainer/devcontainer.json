@@ -1,7 +1,7 @@
 {
 	"name": "cicd",
 	"dockerComposeFile": [
-		"../docker-compose.yml"
+		"../docker-compose.yaml"
 	],
 	"service": "devcontainer",
 	"workspaceFolder": "/workspaces/cicd",
@@ -17,8 +17,9 @@
 				}
 			},
 			"extensions": [
-				"hashicorp.terraform",
 				"yzhang.markdown-all-in-one",
+				"ms-azuretools.vscode-docker",
+				"hashicorp.terraform",
 				"github.vscode-github-actions"
 			]
 		}

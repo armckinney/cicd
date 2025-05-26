@@ -1,0 +1,24 @@
+name: wf-manual-approval
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment for deployment'
+        required: true
+        type: choice
+        options:
+        - dev
+        - test
+        - prod
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  manual-approval:
+    uses: armckinney/cicd/.github/workflows/rwf-manual-approval.yaml@main
+    with:
+      environment: ${{ inputs.environment }}
+      message: 'Approval needed for to proceed'
