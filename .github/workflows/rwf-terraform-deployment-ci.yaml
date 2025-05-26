@@ -16,13 +16,13 @@ on:
         type: string
         required: true
     secrets:
-      AZURE_CLIENT_ID:
+      ARM_CLIENT_ID:
         description: 'Azure Service Principal Client ID'
         required: false
-      AZURE_SUBSCRIPTION_ID:
+      ARM_SUBSCRIPTION_ID:
         description: 'Azure Subscription ID'
         required: false
-      AZURE_TENANT_ID:
+      ARM_TENANT_ID:
         description: 'Azure Tenant ID'
         required: false
 
@@ -46,9 +46,9 @@ jobs:
       configuration: ${{ inputs.configuration }}
       environment: ${{ inputs.environment }}
     secrets:
-      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
 
   terraform-apply:
     needs: static-analysis
@@ -58,6 +58,6 @@ jobs:
       configuration: ${{ inputs.configuration }}
       environment: ${{ inputs.environment }}
     secrets:
-      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
