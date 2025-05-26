@@ -35,7 +35,8 @@ Usage of the CICD logic defined in this repository can be done via examples in w
 ### Terraform
 
 - [wf-terraform-ci-azurerg-dev](.github/workflows/wf-terraform-ci-azurerg-dev.yaml): run terraform ci pipeline on a single configuration/environment that deploys to azure
-  - Secrets Needed: `DOCKER_HUB_ACCESS_TOKEN`, `ARM_CLIENT_ID`, `ARM_SUBSCRIPTION_ID`, `ARM_TENANT_ID` 
+  - Secrets Needed: `DOCKER_HUB_ACCESS_TOKEN`, `ARM_CLIENT_ID`, `ARM_SUBSCRIPTION_ID`, `ARM_TENANT_ID`
+  - Note: if using OpenID Connect - you can also set the following environment variables to `true` the `azurerm` Terraform provider will use OIDC for auth automatically and not require an azure login set `ARM_USE_OIDC` & `ARM_USE_AZUREAD`
 - [wf-terraform-ci-{configuration}-{environment}](.github/workflows/wf-terraform-ci-example-dev.yaml): run terraform ci pipeline on a single configuration/environment, useful for development branch deployments
     - Secrets Needed: `DOCKER_HUB_ACCESS_TOKEN`
 - [wf-terraform-ci-release](.github/workflows/wf-terraform-ci-release.yaml): run terraform ci pipeline on a test environment and then release changes to all environments in a matrix implementation on merge to main
