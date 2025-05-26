@@ -1,0 +1,26 @@
+name: rwf-manual-approval
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: 'Environment name for approval'
+        required: true
+        type: string
+      message:
+        description: 'Approval message to display'
+        required: false
+        type: string
+        default: 'Manual approval required to proceed'
+
+jobs:
+  manual-approval:
+    runs-on: ubuntu-24.04
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Manual Approval
+        run: |
+          echo "::notice title=Manual Approval::${{ inputs.message }}"
+          echo "Environment: ${{ inputs.environment }}"
+          echo "This step requires manual approval in the GitHub repository settings"
+          echo "Configure the '${{ inputs.environment }}' repository environment with required reviewers"

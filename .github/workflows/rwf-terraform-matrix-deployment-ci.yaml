@@ -41,6 +41,13 @@ jobs:
       container_image: ${{ inputs.container_image }}
       configuration: ${{ inputs.configuration }}
       environment: ${{ inputs.environment }}
+  
+  plan-approval:
+    needs: [terraform-plan]
+    uses: armckinney/cicd/.github/workflows/rwf-manual-approval.yaml@main
+    with:
+      environment: ${{ inputs.environment }}
+      message: 'Approval needed for Terraform plan to proceed'
 
   terraform-apply:
     needs: terraform-plan

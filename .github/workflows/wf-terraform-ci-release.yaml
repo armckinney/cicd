@@ -49,8 +49,15 @@ jobs:
       configuration: ${{ needs.setup-env.outputs.configuration }}
       environment: 'test'
 
+  test-plan-approval:
+    needs: [test-terraform-plan, setup-env]
+    uses: armckinney/cicd/.github/workflows/rwf-manual-approval.yaml@main
+    with:
+      environment: ${{ needs.setup-env.outputs.environment }}
+      message: 'Approval needed for Terraform plan to proceed'
+
   test-terraform-apply:
-    needs: [setup-env, container-build-and-push, test-terraform-plan]
+    needs: [setup-env, container-build-and-push, test-terraform-plan, test-plan-approval]
     uses: armckinney/cicd/.github/workflows/rwf-terraform-apply.yaml@main
     with:
       container_image: ${{ needs.container-build-and-push.outputs.container_image }}
