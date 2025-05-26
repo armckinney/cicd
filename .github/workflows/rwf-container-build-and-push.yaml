@@ -12,6 +12,16 @@ on:
         type: string
         required: false
         default: "./.devcontainer/Dockerfile"
+      image_name: 
+        description: "Name of the Docker image to build and push"
+        type: string
+        required: false
+        default: ${{ github.event.repository.name }}
+      image_tag:
+        description: "Tag to use for the Docker image"
+        type: string
+        required: false
+        default: ${{ github.head_ref || github.ref_name }}
     secrets:
       DOCKER_HUB_ACCESS_TOKEN:
         description: "DockerHub access token"
@@ -29,7 +39,7 @@ jobs:
   container-build-and-push:
     runs-on: ubuntu-24.04
     outputs:
-        container_image: ${{ inputs.dockerhub_id }}/${{ github.event.repository.name }}:${{ github.head_ref || github.ref_name }} 
+        container_image: ${{ inputs.dockerhub_id }}/${{ inputs.image_name }}:${{ inputs.image_tag }}
 
     steps:
     - name: Checkout repository
@@ -60,7 +70,7 @@ jobs:
         context: ./
         file: ${{ inputs.dockerfile }}
         builder: ${{ steps.buildx.outputs.name }}
-        tags: ${{ inputs.dockerhub_id }}/${{ github.event.repository.name }}:${{ github.head_ref || github.ref_name }} 
+        tags: ${{ inputs.dockerhub_id }}/${{ inputs.image_name }}:${{ inputs.image_tag }}
         cache-from: type=local,src=/tmp/.buildx-cache
         cache-to: type=local,dest=/tmp/.buildx-cache-new
         push: true
