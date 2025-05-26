@@ -2,10 +2,16 @@
 
 ## Reusable Workflows
 
-- [rwf-auto-pull-request](../../.github/workflows/rwf-auto-pull-request.yaml): create a pull request when an issue's assignie is set & delete Pr/Branch on issue closed
+### GitHub Repositories
+- [rwf-auto-pull-request](../../.github/workflows/rwf-auto-pull-request.yaml): create a pull request when an issue's assignee is set & delete PR/Branch on issue closed
+- [rwf-manual-approval](../../.github/workflows/rwf-manual-approval.yaml): implement a manual approval step in GitHub workflows, functions off of repository environments
+
+### Containerization 
+- [rwf-container-build-and-push](.github/workflows/rwf-container-build-and-push.yaml): builds and pushes a container image from a repository dockerfile, useful for devcontainers
+
+### Terraform
 - [rwf-terraform-deployment-ci](.github/workflows/rwf-terraform-deployment-ci.yaml): run a terraform deployment on a structured configuration inside of a container, this includes static analysis, planning, and applying
 - [rwf-terraform-matrix-deployment-ci](.github/workflows/rwf-terraform-matrix-deployment-ci.yaml): run a terraform deployment on a structured configuration - across a matrix of environments - inside of a container, this includes linting, planning, and applying
-- [rwf-container-build-and-push](.github/workflows/rwf-container-build-and-push.yaml): builds and pushes a container image from a repository dockerfile, useful for devcontainers
 - [rwf-terraform-static-analysis](.github/workflows/rwf-terraform-static-analysis.yaml): run terraform static analysis on a structured configuration inside of a container, this includes lint, validate, docs, security, and format
 - [rwf-terraform-apply](.github/workflows/rwf-terraform-apply.yaml): run terraform apply on a structured configuration inside of a container
 - [rwf-terraform-destroy](.github/workflows/rwf-terraform-destroy.yaml): run terraform destroy on a structured configuration inside of a container
@@ -16,9 +22,16 @@
 
 ## Usage
 
-Usage of the CICD logic defined in this repository can be done via examples in which this repository uses for it's own CICD.
+Usage of the CICD logic defined in this repository can be done via examples in which this repository uses for it's own CICD. See the following lists of examples:
 
-#### Examples
+### GitHub
+- [wf-auto-pull-request](../../.github/workflows/wf-auto-pull-request.yaml): automatically open and close pull requests
+- [wf-manual-approval](../../.github/workflows/wf-manual-approval.yaml): add manual approval step to your workflow, works off of repository environments
+
+### Containerization
+- [wf-container-build-and-push](../../.github/workflows/wf-container-build-and-push.yaml): build and push images to DockerHub
+
+### Terraform
 
 - [wf-terraform-ci-{configuration}-{environment}](.github/workflows/wf-terraform-ci-example-dev.yaml): run terraform ci pipeline on a single configuration/environment, useful for development branch deployments
 - [wf-terraform-ci-release](.github/workflows/wf-terraform-ci-release.yaml): run terraform ci pipeline on a test environment and then release changes to all environments in a matrix implementation on merge to main
