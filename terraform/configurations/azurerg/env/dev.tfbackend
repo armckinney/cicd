@@ -1,4 +1,4 @@
 resource_group_name  = "rg-admin-prod"
 storage_account_name = "stadminsprod"
-container            = "terraform"
+container_name       = "terraform"
 key                  = "/cicd/azurerg/dev.tfstate"
