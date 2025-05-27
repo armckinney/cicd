@@ -32,5 +32,5 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_file_path"></a> [file\_path](#output\_file\_path) | n/a |
+| <a name="output_azurerm_resource_group"></a> [azurerm\_resource\_group](#output\_azurerm\_resource\_group) | n/a |
 <!-- END_TF_DOCS -->
