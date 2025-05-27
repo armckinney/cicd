@@ -20,5 +20,5 @@ RUN mkdir /tmp/container \
 
 WORKDIR ${WORKSPACE}
 
-# switch back to dialog for any ad-hoc use of apt-get
+# switch back to dialog for any ad-hoc use of apt-get 
 ENV DEBIAN_FRONTEND=dialog
