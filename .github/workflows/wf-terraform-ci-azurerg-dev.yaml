@@ -42,12 +42,10 @@ jobs:
       container_image: ${{ needs.container-build-and-push.outputs.container_image }}
       configuration: ${{ needs.setup-env.outputs.configuration }}
       environment: ${{ needs.setup-env.outputs.environment }}
-    # NOTE: you can also login using OIDC if you do not set the following environment variables:
-    # `ARM_USE_OIDC`, `ARM_USE_AZUREAD`
-    # secrets:
-    #   ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-    #   ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-    #   ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+    secrets:
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
 
   # note: this is just for testing purposes, it will destroy the resources created by the terraform-deployment-ci job
   terraform-destroy:
@@ -57,4 +55,7 @@ jobs:
       container_image: ${{ needs.container-build-and-push.outputs.container_image }}
       configuration: ${{ needs.setup-env.outputs.configuration }}
       environment: ${{ needs.setup-env.outputs.environment }}
-
+    secrets:
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
