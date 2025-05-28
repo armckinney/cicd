@@ -46,6 +46,8 @@ jobs:
       ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
       ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
       ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+    permissions:
+      id-token: write
 
   # note: this is just for testing purposes, it will destroy the resources created by the terraform-deployment-ci job
   terraform-destroy:
@@ -59,3 +61,5 @@ jobs:
       ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
       ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
       ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+    permissions:
+      id-token: write

@@ -35,7 +35,8 @@ Usage of the CICD logic defined in this repository can be done via examples in w
 ### Terraform
 
 - [wf-terraform-ci-azurerg-dev](.github/workflows/wf-terraform-ci-azurerg-dev.yaml): run terraform ci pipeline on a single configuration/environment that deploys to azure
-  - Secrets Needed: `DOCKER_HUB_ACCESS_TOKEN`, `ARM_CLIENT_ID`, `ARM_SUBSCRIPTION_ID`, `ARM_TENANT_ID`
+  - Secrets needed: `DOCKER_HUB_ACCESS_TOKEN`, `ARM_CLIENT_ID`, `ARM_SUBSCRIPTION_ID`, `ARM_TENANT_ID`
+  - Permissions needed: `id-token: write`
   - Note: because workflow/repository environment variables are not automatically exposed to Reusable Workflows, it is not recommended to pass the `ARM_USE_OIDC` & `ARM_USE_AZUREAD` variables to terraform workflows as it can cause authentication complexity 
 - [wf-terraform-ci-{configuration}-{environment}](.github/workflows/wf-terraform-ci-example-dev.yaml): run terraform ci pipeline on a single configuration/environment, useful for development branch deployments
     - Secrets Needed: `DOCKER_HUB_ACCESS_TOKEN`
