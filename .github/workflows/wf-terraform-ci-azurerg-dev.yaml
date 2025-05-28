@@ -42,13 +42,11 @@ jobs:
       container_image: ${{ needs.container-build-and-push.outputs.container_image }}
       configuration: ${{ needs.setup-env.outputs.configuration }}
       environment: ${{ needs.setup-env.outputs.environment }}
-      arm_use_oidc: true
     secrets:
       ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
       ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
       ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-    permissions:
-      id-token: write
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
 
   # note: this is just for testing purposes, it will destroy the resources created by the terraform-deployment-ci job
   terraform-destroy:
@@ -58,10 +56,8 @@ jobs:
       container_image: ${{ needs.container-build-and-push.outputs.container_image }}
       configuration: ${{ needs.setup-env.outputs.configuration }}
       environment: ${{ needs.setup-env.outputs.environment }}
-      arm_use_oidc: true
     secrets:
       ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
       ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
       ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-    permissions:
-      id-token: write
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
