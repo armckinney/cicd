@@ -52,6 +52,9 @@ Authentication via the azurerm Terraform Provider is done so via environment var
 1. OIDC (recommended): requires the following secrets and permissions to manage OIDC tokens in the reusable workflows. This requires setting up a Application Registration federated credential in Azure.
   
 ```
+    with:
+      ...
+      arm_use_oidc: true
     secrets:
       ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
       ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
@@ -65,9 +68,9 @@ Authentication via the azurerm Terraform Provider is done so via environment var
 ```
     secrets:
       ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
       ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
       ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
 ```
 
 ##  Architecture

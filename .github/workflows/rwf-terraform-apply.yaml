@@ -15,6 +15,11 @@ on:
         description: 'Configuration Environment, should be the same for both the backend and GitHub environment'
         type: string
         required: true
+      arm_use_oidc:
+        description: 'Use OIDC for Azure authentication'
+        type: boolean
+        default: false
+        required: false
     secrets:
       ARM_CLIENT_ID:
         description: 'Azure Service Principal Client ID'
@@ -41,6 +46,7 @@ jobs:
       image: ${{ inputs.container_image }}
     
     env:
+      ARM_USE_OIDC: ${{ inputs.arm_use_oidc }}
       ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
       ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
       ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}

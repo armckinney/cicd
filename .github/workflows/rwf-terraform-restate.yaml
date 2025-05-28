@@ -15,6 +15,11 @@ on:
         description: 'Configuration Environment, should be the same for both the backend and GitHub environment'
         type: string
         required: true
+      arm_use_oidc:
+        description: 'Use OIDC for Azure authentication'
+        type: boolean
+        default: false
+        required: false
     secrets:
       ARM_CLIENT_ID:
         description: 'Azure Service Principal Client ID'
@@ -24,6 +29,9 @@ on:
         required: false
       ARM_TENANT_ID:
         description: 'Azure Tenant ID'
+        required: false
+      ARM_CLIENT_SECRET:
+        description: 'Azure Service Principal Client Secret'
         required: false
 
 defaults:
@@ -38,9 +46,11 @@ jobs:
       image: ${{ inputs.container_image }}
 
     env:
+      ARM_USE_OIDC: ${{ inputs.arm_use_oidc }}
       ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
       ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
       ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
 
     steps:
       - name: Checkout repository
@@ -53,6 +63,7 @@ jobs:
           client-id: ${{ secrets.ARM_CLIENT_ID }}
           tenant-id: ${{ secrets.ARM_TENANT_ID }}
           subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+          creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}","subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
 
       - name: Terraform init
         run: |
@@ -89,21 +100,15 @@ jobs:
       image: ${{ inputs.container_image }}
 
     env:
+      ARM_USE_OIDC: ${{ inputs.arm_use_oidc }}
       ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
       ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
       ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Azure Login
-        if: env.ARM_CLIENT_ID != '' && env.ARM_SUBSCRIPTION_ID != '' && env.ARM_TENANT_ID != ''
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.ARM_CLIENT_ID }}
-          tenant-id: ${{ secrets.ARM_TENANT_ID }}
-          subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
 
       - name: Terraform init
         run: |
