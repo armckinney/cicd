@@ -1,10 +1,6 @@
 terraform {
   required_version = "1.10.5"
-  backend "azurerm" {
-    # note: if oidc is enabled, can also use:
-    # use_oidc             = true
-    # use_azuread_auth     = true
-  }
+  backend "azurerm" {}
 
   required_providers {
     azurerm = {
@@ -12,6 +8,10 @@ terraform {
       version = "4.30.0"
     }
   }
+}
+
+provider "azurerm" {
+  features {}
 }
 
 resource "azurerm_resource_group" "this" {
