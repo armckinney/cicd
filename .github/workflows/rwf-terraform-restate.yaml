@@ -83,6 +83,7 @@ jobs:
 
 
   terraform-import:
+    needs: delete-state
     runs-on: ubuntu-24.04
     container:
       image: ${{ inputs.container_image }}

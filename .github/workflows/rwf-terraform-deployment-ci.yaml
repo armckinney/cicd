@@ -51,7 +51,7 @@ jobs:
       ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
 
   terraform-apply:
-    needs: static-analysis
+    needs: terraform-plan
     uses: armckinney/cicd/.github/workflows/rwf-terraform-apply.yaml@main
     with:
       container_image: ${{ inputs.container_image }}

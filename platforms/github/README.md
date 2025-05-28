@@ -35,9 +35,7 @@ Usage of the CICD logic defined in this repository can be done via examples in w
 ### Terraform
 
 - [wf-terraform-ci-azurerg-dev](.github/workflows/wf-terraform-ci-azurerg-dev.yaml): run terraform ci pipeline on a single configuration/environment that deploys to azure
-  - Secrets needed: `DOCKER_HUB_ACCESS_TOKEN`, `ARM_CLIENT_ID`, `ARM_SUBSCRIPTION_ID`, `ARM_TENANT_ID`
-  - Permissions needed: `id-token: write`
-  - Note: because workflow/repository environment variables are not automatically exposed to Reusable Workflows, it is not recommended to pass the `ARM_USE_OIDC` & `ARM_USE_AZUREAD` variables to terraform workflows as it can cause authentication complexity 
+  - Secrets Needed: `DOCKER_HUB_ACCESS_TOKEN` & [Terraform Azure Authentication](#terraform-azure-authentication)
 - [wf-terraform-ci-{configuration}-{environment}](.github/workflows/wf-terraform-ci-example-dev.yaml): run terraform ci pipeline on a single configuration/environment, useful for development branch deployments
     - Secrets Needed: `DOCKER_HUB_ACCESS_TOKEN`
 - [wf-terraform-ci-release](.github/workflows/wf-terraform-ci-release.yaml): run terraform ci pipeline on a test environment and then release changes to all environments in a matrix implementation on merge to main
@@ -46,6 +44,31 @@ Usage of the CICD logic defined in this repository can be done via examples in w
 - [wf-terraform-destroy](.github/workflows/wf-terraform-destroy.yaml): run adhoc terraform destroy on an input configuration/environment on the main branch
 - [wf-terraform-show](.github/workflows/wf-terraform-show.yaml): run adhoc terraform show on an input configuration/environment on the main branch
 - [wf-terraform-restate](.github/workflows/wf-terraform-restate.yaml): run adhoc terraform restate on an input configuration/environment on the main branch, this will recreate the statefile, useful if corrupt
+
+### Terraform Azure Authentication
+
+Authentication via the azurerm Terraform Provider is done so via environment variables which are passed to reusable workflows. The provider will handle accessing them and authenticating. 
+
+1. OIDC (recommended): requires the following secrets and permissions to manage OIDC tokens in the reusable workflows. This requires setting up a Application Registration federated credential in Azure.
+  
+```
+    secrets:
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+    permissions:
+      id-token: write
+```
+
+2. Service Principal Credentials: requires the following secrets.This requires setting up a Application Registration client secret in Azure.
+
+```
+    secrets:
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+```
 
 ##  Architecture
 
