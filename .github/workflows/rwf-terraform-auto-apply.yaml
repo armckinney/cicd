@@ -1,4 +1,4 @@
-name: terraform-show
+name: terraform-apply
 
 on:
   workflow_call:
@@ -39,11 +39,11 @@ defaults:
     shell: bash
 
 jobs:
-  terraform-show:
+  terraform-apply:
     runs-on: ubuntu-24.04
     container:
       image: ${{ inputs.container_image }}
-
+    
     env:
       ARM_USE_OIDC: ${{ inputs.arm_use_oidc }}
       ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
@@ -59,6 +59,6 @@ jobs:
         run: |
           terraform -chdir=terraform/configurations/${{ inputs.configuration }} init -backend-config=env/${{ inputs.environment }}.tfbackend -reconfigure
 
-      - name: Terraform show
+      - name: Terraform apply
         run: |
-          terraform -chdir=terraform/configurations/${{ inputs.configuration }} show
+          terraform -chdir=terraform/configurations/${{ inputs.configuration }} apply -auto-approve -var-file=env/${{ inputs.environment }}.tfvars
