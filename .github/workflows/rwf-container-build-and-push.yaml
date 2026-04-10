@@ -4,9 +4,9 @@ on:
   workflow_call:
     inputs:
       dockerhub_id: 
-        description: "DockerHub username"
+        description: "Deprecated: DockerHub username (no longer used, kept for backwards compatibility)"
         type: string
-        required: true
+        required: false
       dockerfile:
         description: "Filepath of dockerfile to build and push"
         type: string
@@ -24,8 +24,8 @@ on:
         default: ${{ github.head_ref || github.ref_name }}
     secrets:
       DOCKER_HUB_ACCESS_TOKEN:
-        description: "DockerHub access token"
-        required: true
+        description: "Deprecated: DockerHub access token (no longer used, kept for backwards compatibility)"
+        required: false
     outputs:
       container_image:
         description: "Docker image name"
@@ -39,17 +39,18 @@ jobs:
   container-build-and-push:
     runs-on: ubuntu-24.04
     outputs:
-        container_image: ${{ inputs.dockerhub_id }}/${{ inputs.image_name }}:${{ inputs.image_tag }}
+        container_image: ghcr.io/${{ github.repository_owner }}/${{ inputs.image_name }}:${{ inputs.image_tag }}
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Login to DockerHub
+    - name: Login to GitHub Container Registry
       uses: docker/login-action@v3
       with:
-        username: ${{ inputs.dockerhub_id }}
-        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Access Docker layer cache
       uses: actions/cache@v4
@@ -70,7 +71,7 @@ jobs:
         context: ./
         file: ${{ inputs.dockerfile }}
         builder: ${{ steps.buildx.outputs.name }}
-        tags: ${{ inputs.dockerhub_id }}/${{ inputs.image_name }}:${{ inputs.image_tag }}
+        tags: ghcr.io/${{ github.repository_owner }}/${{ inputs.image_name }}:${{ inputs.image_tag }}
         cache-from: type=local,src=/tmp/.buildx-cache
         cache-to: type=local,dest=/tmp/.buildx-cache-new
         push: true

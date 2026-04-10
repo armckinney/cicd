@@ -6,4 +6,4 @@ on:
   
 jobs:
   auto-pull-request:
-    uses: armckinney/cicd/.github/workflows/rwf-auto-pull-request.yaml@main
+    uses: ./.github/workflows/rwf-auto-pull-request.yaml

@@ -18,7 +18,7 @@ defaults:
 
 jobs:
   manual-approval:
-    uses: armckinney/cicd/.github/workflows/rwf-manual-approval.yaml@main
+    uses: ./.github/workflows/rwf-manual-approval.yaml
     with:
       environment: ${{ inputs.environment }}
       message: 'Approval needed for to proceed'

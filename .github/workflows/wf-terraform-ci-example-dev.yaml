@@ -1,7 +1,6 @@
 name: wf-terraform-ci-example-dev
 
 env:
-  DOCKERHUB_ID: 'armck'
   CONFIGURATION: 'example'
   ENVIRONMENT: 'dev'
 
@@ -17,28 +16,21 @@ jobs:
   setup-env:
     runs-on: ubuntu-24.04
     outputs:
-        dockerhub_id: ${{ steps.env.outputs.dockerhub_id }}
         configuration: ${{ steps.env.outputs.configuration }}
         environment: ${{ steps.env.outputs.environment }}
     steps:
       - name: Setup environment variables
         id: env
         run: |
-          echo "dockerhub_id=$DOCKERHUB_ID" >> "$GITHUB_OUTPUT"
           echo "configuration=$CONFIGURATION" >> "$GITHUB_OUTPUT"
           echo "environment=$ENVIRONMENT" >> "$GITHUB_OUTPUT"
 
   container-build-and-push:
-    needs: setup-env
-    uses: armckinney/cicd/.github/workflows/rwf-container-build-and-push.yaml@main
-    with:
-      dockerhub_id: ${{ needs.setup-env.outputs.dockerhub_id }}
-    secrets:
-      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+    uses: ./.github/workflows/rwf-container-build-and-push.yaml
 
   terraform-deployment-ci:
     needs: [setup-env, container-build-and-push]
-    uses: armckinney/cicd/.github/workflows/rwf-terraform-deployment-ci.yaml@main
+    uses: ./.github/workflows/rwf-terraform-deployment-ci.yaml
     with:
       container_image: ${{ needs.container-build-and-push.outputs.container_image }}
       configuration: ${{ needs.setup-env.outputs.configuration }}
