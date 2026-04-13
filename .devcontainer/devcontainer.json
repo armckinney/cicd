@@ -1,7 +1,7 @@
 {
 	"name": "cicd",
 	"dockerComposeFile": [
-		"../docker-compose.yaml"
+		"docker-compose.yaml"
 	],
 	"service": "devcontainer",
 	"workspaceFolder": "/workspaces/cicd",
@@ -14,11 +14,25 @@
 						"path": "bash",
 						"icon": "terminal-bash"
 					}
+				},
+				"files.exclude": {
+					"**/.git": true,
+					"**/.svn": true,
+					"**/.hg": true,
+					"**/CVS": true,
+					"**/.DS_Store": true,
+					"**/bin": true,
+					"**/obj": true,
+					"**/.vs": true
+				},
+				"editor.formatOnSave": true,
+				"[dockerfile]": {
+					"editor.formatOnSave": false
 				}
 			},
 			"extensions": [
-				"yzhang.markdown-all-in-one",
 				"ms-azuretools.vscode-docker",
+				"yzhang.markdown-all-in-one",
 				"hashicorp.terraform",
 				"github.vscode-github-actions"
 			]

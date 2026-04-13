@@ -1,18 +1,17 @@
 name: python-test
-
+# 
 on:
   workflow_call:
     inputs:
+      container_image:
+        description: 'Container image name'
+        type: string
+        required: true
       working_directory:
         description: 'Directory to run tests in'
         type: string
         required: false
         default: '.'
-      python_version:
-        description: 'Python version to use'
-        type: string
-        required: false
-        default: '3.12'
 
 defaults:
   run:
@@ -21,6 +20,8 @@ defaults:
 jobs:
   pytest:
     runs-on: ubuntu-24.04
+    container:
+      image: ${{ inputs.container_image }}
     permissions:
       contents: read
 

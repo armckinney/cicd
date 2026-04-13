@@ -1,18 +1,17 @@
 name: python-static-analysis
-
+# 
 on:
   workflow_call:
     inputs:
+      container_image:
+        description: 'Container image name'
+        type: string
+        required: true
       working_directory:
         description: 'Directory to run static analysis in'
         type: string
         required: false
         default: '.'
-      python_version:
-        description: 'Python version to use'
-        type: string
-        required: false
-        default: '3.12'
 
 defaults:
   run:
@@ -21,17 +20,14 @@ defaults:
 jobs:
   ruff-check:
     runs-on: ubuntu-24.04
+    container:
+      image: ${{ inputs.container_image }}
     permissions:
       contents: read
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-
-    - name: Setup uv
-      uses: astral-sh/setup-uv@v5
-      with:
-        python-version: ${{ inputs.python_version }}
 
     - name: Ruff check
       working-directory: ${{ inputs.working_directory }}
@@ -40,17 +36,14 @@ jobs:
 
   ruff-format:
     runs-on: ubuntu-24.04
+    container:
+      image: ${{ inputs.container_image }}
     permissions:
       contents: read
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-
-    - name: Setup uv
-      uses: astral-sh/setup-uv@v5
-      with:
-        python-version: ${{ inputs.python_version }}
 
     - name: Ruff format check
       working-directory: ${{ inputs.working_directory }}
@@ -59,6 +52,8 @@ jobs:
 
   ty-check:
     runs-on: ubuntu-24.04
+    container:
+      image: ${{ inputs.container_image }}
     permissions:
       contents: read
 

@@ -23,9 +23,6 @@
         <a href="https://github.com/armckinney/cicd/pulls">
             <img alt="GitHub pull requests" src="https://img.shields.io/github/issues-pr/armckinney/cicd" />
         </a>
-        <a href="https://stackshare.io/armck/cicd">
-            <img alt="StackShare.io" src="http://img.shields.io/badge/tech-stack-0690fa.svg?style=flat">
-        </a>
     </p>
     <p>
     <!-- Links -->
