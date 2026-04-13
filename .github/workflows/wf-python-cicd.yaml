@@ -27,4 +27,4 @@ jobs:
     with:
       container_image: ghcr.io/armckinney/python:3.12.3
       working_directory: tests/python/example
-      skip_publish: true
+      skip_publish: false
