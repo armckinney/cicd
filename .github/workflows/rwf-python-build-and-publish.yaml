@@ -1,0 +1,72 @@
+name: python-build-and-publish
+
+on:
+  workflow_call:
+    inputs:
+      working_directory:
+        description: 'Directory to build and publish from'
+        type: string
+        required: false
+        default: '.'
+      python_version:
+        description: 'Python version to use'
+        type: string
+        required: false
+        default: '3.12'
+      publish_registry:
+        description: 'Registry to publish to (github or pypi)'
+        type: string
+        required: false
+        default: 'github'
+      skip_publish:
+        description: 'Skip the publish step (build only)'
+        type: boolean
+        required: false
+        default: false
+    secrets:
+      UV_PUBLISH_TOKEN:
+        description: 'Token for publishing to PyPI'
+        required: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-24.04
+    permissions:
+      packages: write
+      contents: read
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        python-version: ${{ inputs.python_version }}
+
+    - name: Build
+      working-directory: ${{ inputs.working_directory }}
+      run: |
+        uv build
+
+    - name: Publish to GitHub Packages
+      # Note: github.token has read-only permissions on fork-based pull requests.
+      # Trigger this workflow from push/release events on the default branch for full access.
+      if: ${{ !inputs.skip_publish && inputs.publish_registry == 'github' }}
+      working-directory: ${{ inputs.working_directory }}
+      run: |
+        uv publish \
+          --publish-url https://pypi.pkg.github.com/${{ github.repository_owner }}/ \
+          --token ${{ github.token }}
+
+    - name: Publish to PyPI
+      if: ${{ !inputs.skip_publish && inputs.publish_registry == 'pypi' }}
+      working-directory: ${{ inputs.working_directory }}
+      env:
+        UV_PUBLISH_TOKEN: ${{ secrets.UV_PUBLISH_TOKEN }}
+      run: |
+        uv publish

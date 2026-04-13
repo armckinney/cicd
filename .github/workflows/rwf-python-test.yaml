@@ -1,0 +1,39 @@
+name: python-test
+
+on:
+  workflow_call:
+    inputs:
+      working_directory:
+        description: 'Directory to run tests in'
+        type: string
+        required: false
+        default: '.'
+      python_version:
+        description: 'Python version to use'
+        type: string
+        required: false
+        default: '3.12'
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  pytest:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        python-version: ${{ inputs.python_version }}
+
+    - name: Test with Pytest
+      working-directory: ${{ inputs.working_directory }}
+      run: |
+        uv run pytest .

@@ -1,0 +1,29 @@
+name: wf-python-cicd
+
+on:
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  python-static-analysis:
+    uses: ./.github/workflows/rwf-python-static-analysis.yaml
+    with:
+      working_directory: platforms/python/example
+
+  python-test:
+    uses: ./.github/workflows/rwf-python-test.yaml
+    with:
+      working_directory: platforms/python/example
+
+  python-build:
+    uses: ./.github/workflows/rwf-python-build-and-publish.yaml
+    with:
+      working_directory: platforms/python/example
+      skip_publish: true
