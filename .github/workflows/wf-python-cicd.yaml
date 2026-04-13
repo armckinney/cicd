@@ -1,5 +1,5 @@
 name: wf-python-cicd
-# 
+
 on:
   pull_request:
     branches: [ main ]
@@ -27,4 +27,4 @@ jobs:
     with:
       container_image: ghcr.io/armckinney/python:3.12.3
       working_directory: tests/python/example
-      skip_publish: false
+      skip_publish: true

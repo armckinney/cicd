@@ -1,5 +1,5 @@
 name: python-build-and-publish
-# 
+
 on:
   workflow_call:
     inputs:

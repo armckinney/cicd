@@ -1,5 +1,3 @@
-# Scope: Auto create PR/Branch when an issue's assignie is set & delete Pr/Branch on issue closed
-
 name: auto-pull-request
 
 on:

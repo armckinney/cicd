@@ -1,4 +1,4 @@
-name: rwf-manual-approval
+name: manual-approval
 
 on:
   workflow_call:
