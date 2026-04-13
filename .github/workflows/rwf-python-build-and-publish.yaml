@@ -12,11 +12,11 @@ on:
         type: string
         required: false
         default: '.'
-      skip_publish:
-        description: 'Skip the publish step (build only)'
-        type: boolean
+      publish_tag:
+        description: 'Git tag to publish release assets to (leave empty to build only)'
+        type: string
         required: false
-        default: false
+        default: ''
 
 defaults:
   run:
@@ -40,7 +40,8 @@ jobs:
         uv build
 
     - name: Publish Python package to GitHub Release
-      if: ${{ !inputs.skip_publish }}
+      if: ${{ inputs.publish_tag != '' }}
       uses: softprops/action-gh-release@v2
       with:
+        tag_name: ${{ inputs.publish_tag }}
         files: ${{ inputs.working_directory }}/dist/*
