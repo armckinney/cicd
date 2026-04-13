@@ -23,6 +23,7 @@ jobs:
       working_directory: tests/python/example
 
   python-build:
+    needs: [ python-static-analysis, python-test ]
     uses: ./.github/workflows/rwf-python-build-and-publish.yaml
     with:
       container_image: ghcr.io/armckinney/python:3.12.3
