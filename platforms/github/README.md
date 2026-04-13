@@ -9,6 +9,11 @@
 ### Containerization 
 - [rwf-container-build-and-push](.github/workflows/rwf-container-build-and-push.yaml): builds and pushes a container image from a repository dockerfile, useful for devcontainers
 
+### Python
+- [rwf-python-static-analysis](../../.github/workflows/rwf-python-static-analysis.yaml): run Python static analysis including ruff check, ruff format check, and ty type checking
+- [rwf-python-test](../../.github/workflows/rwf-python-test.yaml): run Python tests with pytest
+- [rwf-python-build-and-publish](../../.github/workflows/rwf-python-build-and-publish.yaml): build a Python package with uv and optionally publish to GitHub Packages or PyPI
+
 ### Terraform
 - [rwf-terraform-deployment-ci](.github/workflows/rwf-terraform-deployment-ci.yaml): run a terraform deployment on a structured configuration inside of a container, this includes static analysis, planning, and applying
 - [rwf-terraform-matrix-deployment-ci](.github/workflows/rwf-terraform-matrix-deployment-ci.yaml): run a terraform deployment on a structured configuration - across a matrix of environments - inside of a container, this includes linting, planning, and applying
@@ -27,6 +32,10 @@ Usage of the CICD logic defined in this repository can be done via examples in w
 ### GitHub
 - [wf-auto-pull-request](../../.github/workflows/wf-auto-pull-request.yaml): automatically open and close pull requests
 - [wf-manual-approval](../../.github/workflows/wf-manual-approval.yaml): add manual approval step to your workflow, works off of repository environments
+
+### Python
+
+- [wf-python-cicd](../../.github/workflows/wf-python-cicd.yaml): run a full Python CICD pipeline (static analysis, tests, and build) against the included example library
 
 ### Containerization
 - [wf-container-build-and-push](../../.github/workflows/wf-container-build-and-push.yaml): build and push images to DockerHub

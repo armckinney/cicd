@@ -1,4 +1,4 @@
-FROM armck/terraform-azure:2.73.0
+FROM ghcr.io/armckinney/terraform-azure:2.73.0
 
 # set workspace directory
 ARG WORKSPACE=/workspaces/cicd

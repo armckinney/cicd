@@ -1,0 +1,47 @@
+name: python-build-and-publish
+
+on:
+  workflow_call:
+    inputs:
+      container_image:
+        description: 'Container image name'
+        type: string
+        required: true
+      working_directory:
+        description: 'Directory to build and publish from'
+        type: string
+        required: false
+        default: '.'
+      publish_tag:
+        description: 'Git tag to publish release assets to (leave empty to build only)'
+        type: string
+        required: false
+        default: ''
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-24.04
+    container:
+      image: ${{ inputs.container_image }}
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Build Python package
+      working-directory: ${{ inputs.working_directory }}
+      run: |
+        uv build
+
+    - name: Publish Python package to GitHub Release
+      if: ${{ inputs.publish_tag != '' }}
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ inputs.publish_tag }}
+        files: ${{ inputs.working_directory }}/dist/*

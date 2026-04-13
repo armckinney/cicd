@@ -1,0 +1,31 @@
+name: wf-python-cicd
+
+on:
+  pull_request:
+    branches: [ main ]
+
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  python-static-analysis:
+    uses: ./.github/workflows/rwf-python-static-analysis.yaml
+    with:
+      container_image: ghcr.io/armckinney/python:3.12.3
+      working_directory: tests/python/example
+
+  python-test:
+    uses: ./.github/workflows/rwf-python-test.yaml
+    with:
+      container_image: ghcr.io/armckinney/python:3.12.3
+      working_directory: tests/python/example
+
+  python-build:
+    needs: [ python-static-analysis, python-test ]
+    uses: ./.github/workflows/rwf-python-build-and-publish.yaml
+    with:
+      container_image: ghcr.io/armckinney/python:3.12.3
+      working_directory: tests/python/example
+      publish_tag: 'ci'

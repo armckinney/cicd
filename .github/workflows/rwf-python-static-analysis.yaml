@@ -1,0 +1,67 @@
+name: python-static-analysis
+
+on:
+  workflow_call:
+    inputs:
+      container_image:
+        description: 'Container image name'
+        type: string
+        required: true
+      working_directory:
+        description: 'Directory to run static analysis in'
+        type: string
+        required: false
+        default: '.'
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  ruff-check:
+    runs-on: ubuntu-24.04
+    container:
+      image: ${{ inputs.container_image }}
+    permissions:
+      contents: read
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Ruff check
+      working-directory: ${{ inputs.working_directory }}
+      run: |
+        uv run ruff check .
+
+  ruff-format:
+    runs-on: ubuntu-24.04
+    container:
+      image: ${{ inputs.container_image }}
+    permissions:
+      contents: read
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Ruff format check
+      working-directory: ${{ inputs.working_directory }}
+      run: |
+        uv run ruff format --check .
+
+  ty-check:
+    runs-on: ubuntu-24.04
+    container:
+      image: ${{ inputs.container_image }}
+    permissions:
+      contents: read
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Ty check
+      working-directory: ${{ inputs.working_directory }}
+      run: |
+        uv run ty check .
