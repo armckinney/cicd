@@ -18,10 +18,10 @@ on:
         required: false
         default: ${{ github.event.repository.name }}
       image_tag:
-        description: "Tag to use for the Docker image"
+        description: "Tag to use for the Docker image (defaults to SHA hash of github.head_ref or github.ref_name)"
         type: string
         required: false
-        default: ${{ github.head_ref || github.ref_name }}
+        default: ""
     secrets:
       DOCKER_HUB_ACCESS_TOKEN:
         description: "Deprecated: DockerHub access token (no longer used, kept for backwards compatibility)"
@@ -39,7 +39,7 @@ jobs:
   container-build-and-push:
     runs-on: ubuntu-24.04
     outputs:
-        container_image: ghcr.io/${{ github.repository_owner }}/${{ inputs.image_name }}:${{ inputs.image_tag }}
+        container_image: ghcr.io/${{ github.repository_owner }}/${{ inputs.image_name }}:${{ steps.resolve_image_tag.outputs.image_tag }}
 
     steps:
     - name: Checkout repository
@@ -64,6 +64,16 @@ jobs:
       id: buildx
       uses: docker/setup-buildx-action@v3
 
+    - name: Resolve image tag
+      id: resolve_image_tag
+      run: |
+        if [[ -n "${{ inputs.image_tag }}" ]]; then
+          echo "image_tag=${{ inputs.image_tag }}" >> "$GITHUB_OUTPUT"
+        else
+          image_tag="$(sha256sum "${{ inputs.dockerfile }}" | cut -c1-12)"
+          echo "image_tag=$image_tag" >> "$GITHUB_OUTPUT"
+        fi
+
     - name: Build from cache and push
       id: docker_build
       uses: docker/build-push-action@v6
@@ -71,7 +81,7 @@ jobs:
         context: ./
         file: ${{ inputs.dockerfile }}
         builder: ${{ steps.buildx.outputs.name }}
-        tags: ghcr.io/${{ github.repository_owner }}/${{ inputs.image_name }}:${{ inputs.image_tag }}
+        tags: ghcr.io/${{ github.repository_owner }}/${{ inputs.image_name }}:${{ steps.resolve_image_tag.outputs.image_tag }}
         cache-from: type=local,src=/tmp/.buildx-cache
         cache-to: type=local,dest=/tmp/.buildx-cache-new
         push: true
