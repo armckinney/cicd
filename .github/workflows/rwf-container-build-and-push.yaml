@@ -3,10 +3,6 @@ name: container-build-and-push
 on:
   workflow_call:
     inputs:
-      dockerhub_id: 
-        description: "Deprecated: DockerHub username (no longer used, kept for backwards compatibility)"
-        type: string
-        required: false
       dockerfile:
         description: "Filepath of dockerfile to build and push"
         type: string
@@ -22,10 +18,11 @@ on:
         type: string
         required: false
         default: ""
-    secrets:
-      DOCKER_HUB_ACCESS_TOKEN:
-        description: "Deprecated: DockerHub access token (no longer used, kept for backwards compatibility)"
+      platforms:
+        description: "Comma-separated list of platforms to build for (e.g., 'linux/amd64,linux/arm64')"
+        type: string
         required: false
+        default: "linux/amd64"
     outputs:
       container_image:
         description: "Docker image name"
@@ -78,13 +75,14 @@ jobs:
       id: docker_build
       uses: docker/build-push-action@v6
       with:
-        context: ./
-        file: ${{ inputs.dockerfile }}
         builder: ${{ steps.buildx.outputs.name }}
-        tags: ghcr.io/${{ github.repository_owner }}/${{ inputs.image_name }}:${{ steps.resolve_image_tag.outputs.image_tag }}
         cache-from: type=local,src=/tmp/.buildx-cache
         cache-to: type=local,dest=/tmp/.buildx-cache-new
+        context: ./
+        file: ${{ inputs.dockerfile }}
+        platforms: ${{ inputs.platforms }}
         push: true
+        tags: ghcr.io/${{ github.repository_owner }}/${{ inputs.image_name }}:${{ steps.resolve_image_tag.outputs.image_tag }}
 
     - name: Clean cache
       shell: bash
