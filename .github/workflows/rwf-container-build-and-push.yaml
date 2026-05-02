@@ -75,8 +75,8 @@ jobs:
           image_tag="$(sha256sum "${{ inputs.dockerfile }}" | cut -c1-12)"
           echo "image_tag=$image_tag" >> "$GITHUB_OUTPUT"
         fi
+        echo "Resolved Image: ghcr.io/${{ github.repository_owner }}/${{ inputs.image_name }}:$image_tag"
 
-      # TODO: add semver
     - name: Check if image exists
       id: check_image
       run: |
