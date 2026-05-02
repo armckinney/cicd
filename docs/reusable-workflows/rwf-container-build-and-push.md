@@ -33,6 +33,7 @@ jobs:
 | `image_name` | No | `${{ github.event.repository.name }}` | Image name portion of the final GHCR tag. |
 | `image_tag` | No | empty string | Explicit image tag. If omitted, the workflow hashes the Dockerfile contents. |
 | `platforms` | No | `linux/amd64` | Comma-separated build platforms for Buildx. |
+| `overwrite` | No | `false` | When `true`, always build and push even if the image already exists. |
 
 ## Secrets
 
@@ -47,6 +48,8 @@ This workflow does not define any `workflow_call` secrets.
 ## Notes
 
 - The workflow logs in to `ghcr.io` with `secrets.GITHUB_TOKEN`; no Docker Hub secret is needed.
-- The workflow interface now only exposes GHCR-oriented inputs: Dockerfile path, image name, image tag, and target platforms.
+- The workflow interface exposes GHCR-oriented inputs: Dockerfile path, image name, image tag, target platforms, and an overwrite flag.
+- The workflow checks image existence with `docker buildx imagetools inspect` (manifest lookup) instead of pulling the image.
+- Build and cache cleanup run when either `overwrite` is `true`, or when `overwrite` is `false` and the image does not exist.
 - This is the standard entry point used before the Python and Terraform workflows in this repository.
 - The bundled caller example is [../../.github/workflows/wf-container-build-and-push.yaml](../../.github/workflows/wf-container-build-and-push.yaml).

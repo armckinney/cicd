@@ -9,9 +9,9 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN mkdir /tmp/container \
     && cd /tmp/container \
-    # signing key locations
-    && mkdir -p /etc/apt/keyrings \
+    # supporting installs
     && apt update \
+    # primary installs
     # clean up
     && apt autoremove -y \
     && apt clean -y \
