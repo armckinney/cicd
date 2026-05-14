@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [[ "$GITHUB_REF_NAME" == "$DEFAULT_BRANCH" ]]; then
-  echo "Looking up merged PR for commit $GITHUB_SHA"
-  PR_JSON="$(gh api "repos/${REPO}/commits/${GITHUB_SHA}/pulls" \
-    --jq '.[0] // empty' 2>/dev/null || true)"
-else
-  echo "Looking up open PR for branch $GITHUB_REF_NAME"
+PR_JSON=""
+
+echo "Looking up PR associated with commit $GITHUB_SHA"
+PR_JSON="$(gh api "repos/${REPO}/commits/${GITHUB_SHA}/pulls" \
+  --jq '[.[] | select(.state == "open")][0] // .[0] // empty' 2>/dev/null || true)"
+
+if [[ -z "$PR_JSON" || "$PR_JSON" == "null" ]]; then
+  echo "No PR found by commit; looking up open PR by branch owner/ref"
   PR_JSON="$(gh api "repos/${REPO}/pulls" \
     --field state=open \
     --field head="${REPO_OWNER}:${GITHUB_REF_NAME}" \
@@ -14,17 +16,31 @@ else
 fi
 
 if [[ -z "$PR_JSON" || "$PR_JSON" == "null" ]]; then
+  echo "No PR found by owner/ref; scanning open PRs by head ref"
+  PR_JSON="$(gh api "repos/${REPO}/pulls" \
+    --field state=open \
+    --field per_page=100 \
+    --jq '[.[] | select(.head.ref == env.GITHUB_REF_NAME)][0] // empty' 2>/dev/null || true)"
+fi
+
+if [[ -z "$PR_JSON" || "$PR_JSON" == "null" ]]; then
   echo "No PR found; defaulting to patch bump"
+  echo "Context: repo=${REPO} ref=${GITHUB_REF_NAME} sha=${GITHUB_SHA}"
   echo "pr_number=" >> "$GITHUB_OUTPUT"
   echo "bump_type=patch" >> "$GITHUB_OUTPUT"
   echo "json=" >> "$GITHUB_OUTPUT"
   exit 0
 fi
 
-PR_NUMBER="$(jq -r '.number' <<< "$PR_JSON")"
+PR_NUMBER="$(jq -r '.number // empty' <<< "$PR_JSON")"
 BUMP_TYPE="$(jq -r '[(.labels // [])[] | .name] | map(select(startswith("bump:"))) | .[0] // "bump:patch"' \
   <<< "$PR_JSON" | sed 's/bump://')"
 JSON_COMPACT="$(jq -c '.' <<< "$PR_JSON")"
+
+if [[ -z "$PR_NUMBER" || "$PR_NUMBER" == "null" ]]; then
+  echo "PR payload missing number; defaulting to empty PR context"
+  PR_NUMBER=""
+fi
 
 echo "PR #${PR_NUMBER} — bump: ${BUMP_TYPE}"
 echo "pr_number=${PR_NUMBER}" >> "$GITHUB_OUTPUT"
