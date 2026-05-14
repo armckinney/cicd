@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       prerelease_label:
-        description: 'Prerelease label (e.g. "-dev", "-alpha"). Used on non-default branches.'
+        description: 'Prerelease label (e.g. "dev", "alpha"). Used on non-default branches.'
         type: string
         required: false
         default: ''
@@ -15,7 +15,7 @@ on:
         default: ''
     outputs:
       version:
-        description: 'Published version (no leading "v"), e.g. "1.2.4" or "1.2.4-dev42"'
+        description: 'Published version (no leading "v"), e.g. "1.2.4" or "1.2.4pr123dev42"'
         value: ${{ jobs.tag-semver.outputs.version }}
 
 defaults:
@@ -53,7 +53,7 @@ jobs:
       with:
         version: ${{ steps.resolve.outputs.version }}
         bump: ${{ steps.pr.outputs.bump_type }}
-        prerelease_label: ${{ inputs.prerelease_label }}
+        prerelease_label: ${{ inputs.prerelease_label != '' && format('pr{0}{1}', steps.pr.outputs.pr_number || '0', inputs.prerelease_label) || '' }}
         prerelease_id: ${{ inputs.prerelease_id }}
 
     - name: Push tags

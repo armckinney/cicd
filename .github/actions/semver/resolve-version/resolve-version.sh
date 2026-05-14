@@ -7,9 +7,9 @@ if [[ -n "$VERSION" ]]; then
 
 elif [[ "$VERSION_SOURCE" == "git_tag" ]]; then
   BASE="$(git tag --sort=-version:refname \
-    | grep -E '^v?[0-9]+\.[0-9]+\.[0-9]+' | head -1 || true)"
+    | grep -E '^v?[0-9]+\.[0-9]+\.[0-9]+$' | head -1 || true)"
   BASE="${BASE#v}"
-  echo "Latest git tag: $BASE"
+  echo "Latest stable git tag: $BASE"
 
 elif [[ "$VERSION_SOURCE" == *"ghcr.io"* ]]; then
   GHCR_PATH="${VERSION_SOURCE#*ghcr.io/}"
