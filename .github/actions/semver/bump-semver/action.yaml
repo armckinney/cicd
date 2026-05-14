@@ -1,0 +1,42 @@
+name: bump-semver
+description: >
+  Increments a semver string and returns the new version.
+  Supports major, minor, patch, and prerelease bumps with optional label and ID.
+
+inputs:
+  version:
+    description: 'Base semver to bump (e.g. "1.2.3"). No leading "v".'
+    required: true
+  bump:
+    description: 'Component to increment: major | minor | patch | prerelease'
+    required: true
+  prerelease_label:
+    description: 'Label after the dash (e.g. "dev", "alpha", "-beta"). Used only when bump=prerelease.'
+    required: false
+    default: 'pre'
+  prerelease_id:
+    description: |
+      Suffix appended after the label. Defaults to the build run number when not set.
+        - Integer / alphanumeric string (e.g. "7", "abc123") — used verbatim
+        - Single file path (e.g. "go.sum")                   — replaced with first 8 chars of its SHA-256 hash
+        - Newline-separated file paths                        — all files hashed together, first 8 chars used
+    required: false
+    default: ''
+
+outputs:
+  version:
+    description: 'Bumped version string, no leading "v" (e.g. "1.2.4-alpha.7").'
+    value: ${{ steps.bump.outputs.version }}
+
+runs:
+  using: composite
+  steps:
+  - name: Bump version
+    id: bump
+    shell: bash
+    env:
+      VERSION: ${{ inputs.version }}
+      BUMP: ${{ inputs.bump }}
+      PRERELEASE_LABEL: ${{ inputs.prerelease_label }}
+      PRERELEASE_ID: ${{ inputs.prerelease_id }}
+    run: ${{ github.action_path }}/bump-semver.sh

@@ -1,0 +1,62 @@
+name: tag-semver
+
+on:
+  workflow_call:
+    inputs:
+      prerelease_label:
+        description: 'Prerelease label (e.g. "-dev", "-alpha"). Used on non-default branches.'
+        type: string
+        required: false
+        default: ''
+      prerelease_id:
+        description: 'Prerelease ID: alphanumeric string or newline-separated filepaths to hash. Defaults to run number.'
+        type: string
+        required: false
+        default: ''
+    outputs:
+      version:
+        description: 'Published version (no leading "v"), e.g. "1.2.4" or "1.2.4-dev42"'
+        value: ${{ jobs.tag-semver.outputs.version }}
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  tag-semver:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      pull-requests: read
+    outputs:
+      version: ${{ steps.bump.outputs.version }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Get Pull Request
+      id: pr
+      uses: ./.github/actions/github/get-pull-request
+
+    - name: Resolve latest stable version
+      id: resolve
+      uses: ./.github/actions/semver/resolve-version
+      with:
+        version_source: git_tag
+
+    - name: Bump version
+      id: bump
+      uses: ./.github/actions/semver/bump-semver
+      with:
+        version: ${{ steps.resolve.outputs.version }}
+        bump: ${{ steps.pr.outputs.bump_type }}
+        prerelease_label: ${{ inputs.prerelease_label }}
+        prerelease_id: ${{ inputs.prerelease_id }}
+
+    - name: Push tags
+      uses: ./.github/actions/semver/push-tags
+      with:
+        version: ${{ steps.bump.outputs.version }}

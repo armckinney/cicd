@@ -1,0 +1,34 @@
+name: resolve-version
+description: >
+  Returns the latest semver from a version source (git tags, GHCR, or GitHub Releases).
+  Pass an explicit version to skip the source lookup entirely.
+
+inputs:
+  version_source:
+    description: |
+      Accepted values:
+        - "git_tag"                          — latest semver tag in the current repo
+        - "ghcr.io/<owner>/<image>"          — latest semver tag from a GHCR image
+        - "https://github.com/<owner>/<repo>" — latest GitHub Release tag
+    required: true
+  version:
+    description: 'Explicit version override (semver, e.g. "1.2.3"). Skips source lookup when set.'
+    required: false
+    default: ''
+
+outputs:
+  version:
+    description: 'Resolved base version string, no leading "v" (e.g. "1.2.3").'
+    value: ${{ steps.resolve.outputs.version }}
+
+runs:
+  using: composite
+  steps:
+  - name: Resolve version from source
+    id: resolve
+    shell: bash
+    env:
+      GH_TOKEN: ${{ github.token }}
+      VERSION_SOURCE: ${{ inputs.version_source }}
+      VERSION: ${{ inputs.version }}
+    run: ${{ github.action_path }}/resolve-version.sh
