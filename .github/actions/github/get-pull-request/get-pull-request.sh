@@ -13,7 +13,7 @@ else
     --jq '.[0] // empty' 2>/dev/null || true)"
 fi
 
-if [[ -z "$PR_JSON" ]]; then
+if [[ -z "$PR_JSON" || "$PR_JSON" == "null" ]]; then
   echo "No PR found; defaulting to patch bump"
   echo "pr_number=" >> "$GITHUB_OUTPUT"
   echo "bump_type=patch" >> "$GITHUB_OUTPUT"
@@ -22,7 +22,7 @@ if [[ -z "$PR_JSON" ]]; then
 fi
 
 PR_NUMBER="$(jq -r '.number' <<< "$PR_JSON")"
-BUMP_TYPE="$(jq -r '[.labels[].name] | map(select(startswith("bump:"))) | .[0] // "bump:patch"' \
+BUMP_TYPE="$(jq -r '[(.labels // [])[] | .name] | map(select(startswith("bump:"))) | .[0] // "bump:patch"' \
   <<< "$PR_JSON" | sed 's/bump://')"
 JSON_COMPACT="$(jq -c '.' <<< "$PR_JSON")"
 
