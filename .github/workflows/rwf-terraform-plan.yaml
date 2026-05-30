@@ -56,18 +56,21 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Terraform init
-        run: |
-          terraform -chdir=terraform/configurations/${{ inputs.configuration }} init -backend-config=env/${{ inputs.environment }}.tfbackend -reconfigure
+        uses: ./.github/actions/terraform/init
+        with:
+          configuration: ${{ inputs.configuration }}
+          environment: ${{ inputs.environment }}
   
       - name: Terraform import
         continue-on-error: true
-        run: |
-          # unhide the imports file temporarily for import-specific task
-          mv terraform/configurations/${{ inputs.configuration }}/.imports.tf terraform/configurations/${{ inputs.configuration }}/imports.tf
-          terraform -chdir=terraform/configurations/${{ inputs.configuration }} refresh -var-file=env/${{ inputs.environment }}.tfvars || true
-          mv terraform/configurations/${{ inputs.configuration }}/imports.tf terraform/configurations/${{ inputs.configuration }}/.imports.tf
+        uses: ./.github/actions/terraform/import
+        with:
+          configuration: ${{ inputs.configuration }}
+          environment: ${{ inputs.environment }}
 
       - name: Terraform plan
-        run: |
-          terraform -chdir=terraform/configurations/${{ inputs.configuration }} plan -var-file=env/${{ inputs.environment }}.tfvars
+        uses: ./.github/actions/terraform/plan
+        with:
+          configuration: ${{ inputs.configuration }}
+          environment: ${{ inputs.environment }}
   

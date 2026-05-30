@@ -1,0 +1,25 @@
+name: 'Terraform Init'
+description: 'Initializes a Terraform configuration directory.'
+inputs:
+  configuration:
+    description: 'Name of the configuration'
+    required: true
+  environment:
+    description: 'Configuration environment'
+    required: false
+    default: ''
+  backend:
+    description: 'Whether to initialize the backend'
+    required: false
+    default: 'true'
+runs:
+  using: 'composite'
+  steps:
+    - name: Terraform init
+      shell: bash
+      run: |
+        if [ "${{ inputs.backend }}" = "true" ]; then
+          terraform -chdir=terraform/configurations/${{ inputs.configuration }} init -backend-config=env/${{ inputs.environment }}.tfbackend -reconfigure
+        else
+          terraform -chdir=terraform/configurations/${{ inputs.configuration }} init -backend=false
+        fi

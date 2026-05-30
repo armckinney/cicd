@@ -56,9 +56,12 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Terraform init
-        run: |
-          terraform -chdir=terraform/configurations/${{ inputs.configuration }} init -backend-config=env/${{ inputs.environment }}.tfbackend -reconfigure
+        uses: ./.github/actions/terraform/init
+        with:
+          configuration: ${{ inputs.configuration }}
+          environment: ${{ inputs.environment }}
 
       - name: Terraform show
-        run: |
-          terraform -chdir=terraform/configurations/${{ inputs.configuration }} show
+        uses: ./.github/actions/terraform/show
+        with:
+          configuration: ${{ inputs.configuration }}

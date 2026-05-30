@@ -49,8 +49,10 @@ jobs:
       uses: actions/checkout@v4
     
     - name: Terraform lint
-      run: |
-        tflint --chdir=terraform/configurations/${{ inputs.configuration }} --minimum-failure-severity=error --var-file=env/${{ inputs.environment }}.tfvars
+      uses: ./.github/actions/terraform/lint
+      with:
+        configuration: ${{ inputs.configuration }}
+        environment: ${{ inputs.environment }}
     
   terraform-plan:
     needs: terraform-lint

@@ -1,0 +1,13 @@
+name: 'Terraform Security Scan'
+description: 'Runs Trivy security scan on a Terraform configuration'
+inputs:
+  configuration:
+    description: 'Name of the configuration'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: Terraform security
+      shell: bash
+      run: |
+        trivy config --tf-exclude-downloaded-modules --severity HIGH,CRITICAL --exit-code 1 terraform/configurations/${{ inputs.configuration }}

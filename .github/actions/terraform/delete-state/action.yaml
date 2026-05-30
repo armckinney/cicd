@@ -1,0 +1,32 @@
+name: 'Delete Terraform State'
+description: 'Detects the backend type and deletes the statefile (supports local and azurerm)'
+inputs:
+  configuration:
+    description: 'Name of the configuration'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: Delete Terraform statefile
+      shell: bash
+      run: |
+        # locate the backend type from the configuration
+        backend_type=$(terraform -chdir=terraform/configurations/${{ inputs.configuration }} show -json | jq -r '.backend.type')
+
+        # if backend is local, locate it in the backend config and delete it
+        if [ "$backend_type" = "local" ]; then
+          state_file=$(terraform -chdir=terraform/configurations/${{ inputs.configuration }} show -json | jq -r '.backend.config.path')
+          echo "Deleting local state file: $state_file"
+          rm -f "$state_file"
+        fi
+
+        # if backend is azurerm, locate it in the backend config and delete it
+        if [ "$backend_type" = "azurerm" ]; then
+          resource_group=$(terraform -chdir=terraform/configurations/${{ inputs.configuration }} show -json | jq -r '.backend.config.resource_group_name')
+          storage_account=$(terraform -chdir=terraform/configurations/${{ inputs.configuration }} show -json | jq -r '.backend.config.storage_account_name')
+          container_name=$(terraform -chdir=terraform/configurations/${{ inputs.configuration }} show -json | jq -r '.backend.config.container_name')
+          state_file=$(terraform -chdir=terraform/configurations/${{ inputs.configuration }} show -json | jq -r '.backend.config.key')
+
+          echo "Deleting Azure Storage Blob: $state_file in $container_name of $storage_account in $resource_group"
+          az storage blob delete --account-name "$storage_account" --container-name "$container_name" --name "$state_file" --auth-mode login --only-show-errors
+        fi

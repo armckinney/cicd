@@ -66,31 +66,15 @@ jobs:
           creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}","subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
 
       - name: Terraform init
-        run: |
-          terraform -chdir=terraform/configurations/${{ inputs.configuration }} init -backend-config=env/${{ inputs.environment }}.tfbackend -reconfigure
+        uses: ./.github/actions/terraform/init
+        with:
+          configuration: ${{ inputs.configuration }}
+          environment: ${{ inputs.environment }}
 
       - name: Delete Terraform statefile
-        run: |
-          # locate the backend type from the configuration
-          backend_type=$(terraform -chdir=terraform/configurations/${{ inputs.configuration }} show -json | jq -r '.backend.type')
-
-          # if backend is local, locate it in the backend config and delete it
-          if [ "$backend_type" = "local" ]; then
-            state_file=$(terraform -chdir=terraform/configurations/${{ inputs.configuration }} show -json | jq -r '.backend.config.path')
-            echo "Deleting local state file: $state_file"
-            rm -f "$state_file"
-          fi
-
-          # if backend is azurerm, locate it in the backend config and delete it
-          if [ "$backend_type" = "azurerm" ]; then
-            resource_group=$(terraform -chdir=terraform/configurations/${{ inputs.configuration }} show -json | jq -r '.backend.config.resource_group_name')
-            storage_account=$(terraform -chdir=terraform/configurations/${{ inputs.configuration }} show -json | jq -r '.backend.config.storage_account_name')
-            container_name=$(terraform -chdir=terraform/configurations/${{ inputs.configuration }} show -json | jq -r '.backend.config.container_name')
-            state_file=$(terraform -chdir=terraform/configurations/${{ inputs.configuration }} show -json | jq -r '.backend.config.key')
-
-            echo "Deleting Azure Storage Blob: $state_file in $container_name of $storage_account in $resource_group"
-            az storage blob delete --account-name "$storage_account" --container-name "$container_name" --name "$state_file" --auth-mode login --only-show-errors
-          fi
+        uses: ./.github/actions/terraform/delete-state
+        with:
+          configuration: ${{ inputs.configuration }}
 
 
   terraform-import:
@@ -111,13 +95,14 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Terraform init
-        run: |
-          terraform -chdir=terraform/configurations/${{ inputs.configuration }} init -backend-config=env/${{ inputs.environment }}.tfbackend -reconfigure
+        uses: ./.github/actions/terraform/init
+        with:
+          configuration: ${{ inputs.configuration }}
+          environment: ${{ inputs.environment }}
 
       - name: Terraform import
         continue-on-error: true
-        run: |
-          # unhide the imports file temporarily for import-specific task
-          mv terraform/configurations/${{ inputs.configuration }}/.imports.tf terraform/configurations/${{ inputs.configuration }}/imports.tf
-          terraform -chdir=terraform/configurations/${{ inputs.configuration }} refresh -var-file=env/${{ inputs.environment }}.tfvars || true
-          mv terraform/configurations/${{ inputs.configuration }}/imports.tf terraform/configurations/${{ inputs.configuration }}/.imports.tf
+        uses: ./.github/actions/terraform/import
+        with:
+          configuration: ${{ inputs.configuration }}
+          environment: ${{ inputs.environment }}
