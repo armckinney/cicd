@@ -37,16 +37,26 @@
 
 
 <!-- Description -->
-cicd is a repository that consists of a collection of reusable and extendible Continuous Integration and Continuous Deployment automation tools.
+**CICD Workflows** is a repository consisting of a robust collection of reusable and extendible Continuous Integration and Continuous Deployment automation tools, with a primary focus on **GitHub Actions** and **Reusable Workflows**. 
 
-Currently, the automation within this repository solely focuses on Terraform CI.
+It provides modular, standardized, and DRY (Don't Repeat Yourself) components to automate your software development lifecycle and infrastructure provisioning (specifically optimized for Terraform and Python workflows).
 
-There are various platforms in which are supported and are intended to be used as a `copy-and-paste` usage, or specifically in this case, for GitHub, workflows can be sourced from this repository directly.
+---
+
+## 📖 Usage Documentation
+
+For detailed usage, inputs, secrets, and setup instructions, please refer to the following comprehensive documentation guides:
+
+* **[GitHub CI/CD Guides](./docs/github/guides/README.md)**: Explore end-to-end, use-case driven guides for designing container runtimes, terraform pipelines, semantic versioning, and python packages.
+* **[Reusable GitHub Workflows Documentation](./docs/github/reusable-workflows/README.md)**: Explore the pre-defined, parameterizable pipelines (prefixed with `rwf-`) for pull requests, manual approvals, builds, and terraform operations.
+* **[Local GitHub Actions Documentation](./docs/github/actions/README.md)**: Review the granular, dry composite actions (such as `init`, `plan`, `apply`, `validate`, `setup`, `bump`) that power our workflows or can be integrated into custom pipelines.
+
+---
 
 ### Supported Platforms
 
-See the following for the documentation that is associated with each individual platform.
+While this repository is optimized and primarily built for GitHub Actions, we also host copy-and-paste automation components for other platforms:
 
-- [Bamboo Plans](./platforms/bamboo/)
-- [GitHub Actions](./platforms/github/)
-- [Jenkins Pipelines](./platforms/jenkins/)
+* **[GitHub Actions & Reusable Workflows](./platforms/github/)** (Primary Focus)
+* [Bamboo Plans](./platforms/bamboo/)
+* [Jenkins Pipelines](./platforms/jenkins/)

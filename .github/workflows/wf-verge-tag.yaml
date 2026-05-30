@@ -1,4 +1,4 @@
-name: tag-semver
+name: wf-tag-semver
 
 on:
   push:
