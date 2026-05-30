@@ -10,6 +10,12 @@ This directory contains usage documentation for each reusable GitHub Actions wor
 - [rwf-python-build-and-publish](./rwf-python-build-and-publish.md)
 - [rwf-python-static-analysis](./rwf-python-static-analysis.md)
 - [rwf-python-test](./rwf-python-test.md)
+- [rwf-go-build-and-publish](./rwf-go-build-and-publish.md)
+- [rwf-go-releaser](./rwf-go-releaser.md)
+- [rwf-go-static-analysis](./rwf-go-static-analysis.md)
+- [rwf-go-test](./rwf-go-test.md)
+
+
 - [rwf-verge-tag](./rwf-verge-tag.md)
 - [rwf-terraform-apply](./rwf-terraform-apply.md)
 - [rwf-terraform-auto-apply](./rwf-terraform-auto-apply.md)

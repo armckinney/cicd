@@ -1,0 +1,26 @@
+name: 'Go Setup'
+description: 'Sets up a Go environment with caching support'
+inputs:
+  go-version:
+    description: 'The Go version to install'
+    required: false
+    default: ''
+  go-version-file:
+    description: 'Path to a go.mod file to read the Go version from'
+    required: false
+    default: ''
+  working-directory:
+    description: 'Working directory for cache validation'
+    required: false
+    default: '.'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: ${{ inputs.go-version }}
+        go-version-file: ${{ inputs.go-version-file != '' && inputs.go-version-file || format('{0}/go.mod', inputs.working-directory) }}
+        cache: true
+        cache-dependency-path: ${{ inputs.go-version-file != '' && inputs.go-version-file || format('{0}/go.sum', inputs.working-directory) }}

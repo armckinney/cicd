@@ -21,3 +21,10 @@ This directory contains usage documentation for each local GitHub Action in [../
 - [terraform/security](./terraform/security.md)
 - [terraform/lint](./terraform/lint.md)
 - [terraform/delete-state](./terraform/delete-state.md)
+- [go/setup](./go/setup.md)
+- [go/lint](./go/lint.md)
+- [go/test](./go/test.md)
+- [go/build](./go/build.md)
+- [go/releaser](./go/releaser.md)
+
+

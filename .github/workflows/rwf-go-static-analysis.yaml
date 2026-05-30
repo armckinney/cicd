@@ -1,0 +1,46 @@
+name: go-static-analysis
+
+on:
+  workflow_call:
+    inputs:
+      working_directory:
+        description: 'Directory where Go code is located'
+        type: string
+        required: false
+        default: '.'
+      go_version:
+        description: 'Go version to install'
+        type: string
+        required: false
+        default: ''
+      golangci_lint_version:
+        description: 'Version of golangci-lint to use'
+        type: string
+        required: false
+        default: 'v1.60'
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  static-analysis:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: ./.github/actions/go/setup
+      with:
+        go-version: ${{ inputs.go_version }}
+        working-directory: ${{ inputs.working_directory }}
+
+    - name: Run Go Lint
+      uses: ./.github/actions/go/lint
+      with:
+        working-directory: ${{ inputs.working_directory }}
+        golangci-lint-version: ${{ inputs.golangci_lint_version }}

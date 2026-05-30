@@ -1,0 +1,25 @@
+name: 'Go Lint'
+description: 'Runs static analysis (linting) on Go code'
+inputs:
+  working-directory:
+    description: 'Directory where Go code is located'
+    required: false
+    default: '.'
+  golangci-lint-version:
+    description: 'Version of golangci-lint to use'
+    required: false
+    default: 'v1.60'
+  args:
+    description: 'Arguments to pass to golangci-lint'
+    required: false
+    default: '--timeout=5m'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Run golangci-lint
+      uses: golangci/golangci-lint-action@v6
+      with:
+        version: ${{ inputs.golangci-lint-version }}
+        working-directory: ${{ inputs.working-directory }}
+        args: ${{ inputs.args }}

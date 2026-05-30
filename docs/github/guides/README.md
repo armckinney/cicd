@@ -25,5 +25,9 @@ Browse the guides below based on your target stack or deployment use case:
 * **[Python Static Analysis](./python-static-analysis.md)**: Implement automated code quality checks, style guides (flake8, black, mypy), and pytest unit testing.
 * **[Python Package Pipeline](./python-package-pipeline.md)**: Compile and publish source distributions (wheels and tarballs) to PyPI or corporate package repositories.
 
+### 🐹 Go Applications & Binaries
+* **[Go CI/CD Pipeline Guide](./go-pipeline.md)**: Set up automated quality assurance (golangci-lint, tests with race detection and coverage) and production binary builds published directly to GitHub Releases.
+
 ### 🤖 Automation & Pull Requests
 * **[Pull Request Automation](./pr-automation.md)**: Automate background synchronization tasks, track drifitng files, commit changes, and open pre-formatted Pull Requests.
+

@@ -1,0 +1,38 @@
+name: 'Go Test'
+description: 'Runs Go tests with coverage and race detection'
+inputs:
+  working-directory:
+    description: 'Directory where Go code is located'
+    required: false
+    default: '.'
+  race:
+    description: 'Enable race detector ("true" or "false")'
+    required: false
+    default: 'true'
+  coverage:
+    description: 'Generate code coverage profile ("true" or "false")'
+    required: false
+    default: 'true'
+  packages:
+    description: 'Go packages to test'
+    required: false
+    default: './...'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Run Tests
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        RACE_FLAG=""
+        if [ "${{ inputs.race }}" = "true" ]; then
+          RACE_FLAG="-race"
+        fi
+        
+        COVER_FLAG=""
+        if [ "${{ inputs.coverage }}" = "true" ]; then
+          COVER_FLAG="-coverprofile=coverage.out -covermode=atomic"
+        fi
+        
+        go test -v $RACE_FLAG $COVER_FLAG ${{ inputs.packages }}
