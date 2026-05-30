@@ -48,6 +48,9 @@ jobs:
       with:
         token: ${{ secrets.token || github.token }}
 
+    - name: Set up Verge CLI
+      uses: ./.github/actions/verge/setup
+
     - name: Resolve Verge Arguments
       id: resolve_args
       shell: bash
