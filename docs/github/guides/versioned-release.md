@@ -30,8 +30,8 @@ jobs:
     uses: ./.github/workflows/rwf-verge-tag.yaml
     secrets: inherit
     with:
-      # Promotes dev/rc tag calculations to a final, stable tag on main branch
-      verge_arguments: '--kind final'
+      # No verge_arguments are required! 
+      # The workflow automatically resolves the bump kind (major|minor|patch) from the merged PR labels.
       
       # Prunes all temporary development pre-release tags from history
       prune_dev_tags: true

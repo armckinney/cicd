@@ -24,17 +24,16 @@ if [[ -z "$PR_JSON" || "$PR_JSON" == "null" ]]; then
 fi
 
 if [[ -z "$PR_JSON" || "$PR_JSON" == "null" ]]; then
-  echo "No PR found; defaulting to patch bump"
+  echo "No PR found; defaulting to major bump"
   echo "Context: repo=${REPO} ref=${GITHUB_REF_NAME} sha=${GITHUB_SHA}"
   echo "pr_number=" >> "$GITHUB_OUTPUT"
-  echo "bump_type=patch" >> "$GITHUB_OUTPUT"
+  echo "bump_type=major" >> "$GITHUB_OUTPUT"
   echo "json=" >> "$GITHUB_OUTPUT"
   exit 0
 fi
 
 PR_NUMBER="$(jq -r '.number // empty' <<< "$PR_JSON")"
-BUMP_TYPE="$(jq -r '[(.labels // [])[] | .name] | map(select(startswith("bump:"))) | .[0] // "bump:patch"' \
-  <<< "$PR_JSON" | sed 's/bump://')"
+BUMP_TYPE="$(jq -r '[(.labels // [])[] | .name] | map(select(startswith("bump:"))) | map(sub("bump:"; "")) | map({name: ., weight: (if . == "major" then 3 elif . == "minor" then 2 else 1 end)}) | sort_by(.weight) | reverse | .[0].name // "major"' <<< "$PR_JSON")"
 JSON_COMPACT="$(jq -c '.' <<< "$PR_JSON")"
 
 if [[ -z "$PR_NUMBER" || "$PR_NUMBER" == "null" ]]; then

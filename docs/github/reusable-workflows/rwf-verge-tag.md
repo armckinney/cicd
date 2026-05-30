@@ -22,7 +22,9 @@ jobs:
     uses: ./.github/workflows/rwf-verge-tag.yaml
     secrets: inherit
     with:
-      verge_arguments: ${{ github.ref_name == github.event.repository.default_branch && '--kind final' || '' }}
+      # No verge_arguments are required by default!
+      # On dev branches, it defaults to .verge.yaml configuration (vX.Y.Z-dev.N).
+      # On the default branch, it dynamically resolves the bump kind (bump:major|minor|patch) from the merged PR labels.
       prune_dev_tags: ${{ github.ref_name == github.event.repository.default_branch }}
 ```
 
@@ -30,7 +32,7 @@ jobs:
 
 | Name | Required | Type | Default | Description |
 | --- | --- | --- | --- | --- |
-| `verge_arguments` | No | string | empty | Raw arguments and flags passed directly to the `verge bump` command (e.g. `--kind final` or `--kind prerelease --stage dev`). |
+| `verge_arguments` | No | string | empty | Optional raw arguments and flags passed directly to the `verge bump` command (e.g. `--provider-config include_prerelease=false` or `--version 1.0.0`). |
 | `prune_dev_tags` | No | boolean | `true` | Whether to prune old intermediate development tags (e.g. `*-dev.*`) upon successful final release promotion. The workflow automatically detects if the calculated tag is a stable release. |
 
 ## Secrets

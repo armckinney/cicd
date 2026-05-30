@@ -35,11 +35,12 @@ This action does not define any inputs.
 | Name | Description |
 | --- | --- |
 | `pr_number` | Pull request number for the current branch or commit. Empty string if no PR is found. |
-| `bump_type` | Semantic version bump derived from PR labels: `major`, `minor`, or `patch`. Defaults to `patch`. |
+| `bump_type` | Semantic version bump derived from PR labels: `major`, `minor`, or `patch`. Defaults to `major`. |
 | `json` | Compact JSON representation of the pull request. Empty string if no PR is found. |
 
 ## Notes
 
 - The action uses `github.token` through `GH_TOKEN`, so callers do not need to pass a separate token input.
-- The bump type defaults to `patch` when no pull request or matching bump label is found.
+- The bump type defaults to `major` when no pull request or matching bump label is found.
+- If multiple bump labels (e.g. `bump:minor` and `bump:major`) are present on a pull request, the action automatically resolves to the highest-priority bump (`major` > `minor` > `patch`) using a weight-based sort.
 - The action reads repository and ref context from the workflow environment, including the current SHA, ref name, repository name, and default branch.
