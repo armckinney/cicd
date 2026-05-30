@@ -1,0 +1,61 @@
+name: tag-semver
+
+on:
+  workflow_call:
+    inputs:
+      verge_arguments:
+        description: 'Raw arguments passed directly to the Verge CLI bump command (e.g. "--kind final")'
+        type: string
+        required: false
+        default: ''
+      prune_dev_tags:
+        description: 'Whether to prune old dev tags upon successful final release promotion'
+        type: boolean
+        required: false
+        default: true
+    secrets:
+      token:
+        description: 'GitHub token with contents write permissions. Defaults to github.token if not provided.'
+        required: false
+    outputs:
+      version:
+        description: 'Published version, e.g. "1.2.4" or "v1.2.4"'
+        value: ${{ jobs.tag-semver.outputs.version }}
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  tag-semver:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      pull-requests: read
+    outputs:
+      version: ${{ steps.verge_bump.outputs.tag }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.token || github.token }}
+
+    - name: Verge bump
+      id: verge_bump
+      uses: ./.github/actions/verge/bump
+      with:
+        verge_arguments: ${{ inputs.verge_arguments }}
+
+    - name: Push tags
+      uses: ./.github/actions/verge/push-tags
+      with:
+        version: ${{ steps.verge_bump.outputs.tag }}
+
+    - name: Prune Old Dev Tags on Final Release
+      if: success() && inputs.prune_dev_tags == true && steps.verge_bump.outputs.is_prerelease == 'false'
+      uses: ./.github/actions/github/prune-tags
+      with:
+        prerelease_prefix: ${{ steps.verge_bump.outputs.prerelease_prefix }}
+        token: ${{ secrets.token || github.token }}

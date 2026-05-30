@@ -24,6 +24,9 @@ outputs:
 runs:
   using: composite
   steps:
+  - name: Set up Verge CLI
+    uses: ./.github/actions/verge/setup
+
   - name: Push tags
     id: push_tags
     shell: bash

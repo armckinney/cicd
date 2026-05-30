@@ -1,0 +1,19 @@
+name: setup
+description: 'Downloads and installs the Verge CLI on the runner.'
+
+inputs:
+  version:
+    description: 'The specific version of Verge to install (e.g. "v0.1.8" or "0.1.8"). Defaults to latest.'
+    required: false
+    default: ''
+
+runs:
+  using: composite
+  steps:
+  - name: Install Verge CLI
+    shell: bash
+    env:
+      VERGE_VERSION: ${{ inputs.version }}
+    run: |
+      curl -sSL https://raw.githubusercontent.com/armckinney/verge/main/install.sh | bash
+      verge --help

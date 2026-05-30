@@ -1,0 +1,23 @@
+name: prune-tags
+description: >
+  Safely and atomically deletes local/remote git tags and corresponding GitHub Releases
+  matching a specified prerelease prefix.
+
+inputs:
+  prerelease_prefix:
+    description: 'The tag prefix pattern to match and prune (e.g. "v1.2.3-dev" or "1.2.3-alpha").'
+    required: true
+  token:
+    description: 'GitHub token with contents write permissions.'
+    required: false
+    default: ${{ github.token }}
+
+runs:
+  using: composite
+  steps:
+  - name: Prune tags and releases
+    shell: bash
+    env:
+      PRERELEASE_PREFIX: ${{ inputs.prerelease_prefix }}
+      GH_TOKEN: ${{ inputs.token }}
+    run: ${{ github.action_path }}/prune-tags.sh
