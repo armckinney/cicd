@@ -54,8 +54,16 @@ jobs:
       run: |
         ARGS="${{ inputs.verge_arguments }}"
         
-        # On the default branch, if no explicit --kind is supplied,
-        # dynamically resolve it from the PR labels (defaulting to patch)
+        # 1. Resolve the dev tag prefix that was used on the feature branch.
+        # Feature branches default to patch prereleases (e.g. vX.Y.Z-dev.N) on top of the last stable release.
+        # We run verge bump with '--provider gittag' (to ignore prereleases) and '--kind prerelease'
+        # to find the exact dev prefix that would have been generated on the feature branch.
+        DEV_TAG=$(verge bump --provider gittag --kind prerelease)
+        DEV_PREFIX=$(verge parse "$DEV_TAG" --field floating.prerelease --format text)
+        echo "Calculated feature branch dev prefix to prune: $DEV_PREFIX"
+        echo "prune_prefix=$DEV_PREFIX" >> $GITHUB_OUTPUT
+
+        # 2. Dynamically resolve the final release bump kind on the default branch
         if [[ "${{ github.ref_name }}" == "${{ github.event.repository.default_branch }}" ]]; then
           if [[ ! "$ARGS" =~ "--kind" ]]; then
             BUMP_KIND="${{ steps.pr_info.outputs.bump_type }}"
@@ -80,5 +88,5 @@ jobs:
       if: success() && inputs.prune_dev_tags == true && steps.verge_bump.outputs.is_prerelease == 'false'
       uses: ./.github/actions/github/prune-tags
       with:
-        prerelease_prefix: ${{ steps.verge_bump.outputs.prerelease_prefix }}
+        prerelease_prefix: ${{ steps.resolve_args.outputs.prune_prefix }}
         token: ${{ secrets.token || github.token }}
