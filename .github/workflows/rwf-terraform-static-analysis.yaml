@@ -31,8 +31,9 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Terraform format
-      run: |
-        terraform -chdir=terraform/configurations/${{ inputs.configuration }} fmt -check
+      uses: ./.github/actions/terraform/fmt
+      with:
+        configuration: ${{ inputs.configuration }}
 
   terraform-validate:
     runs-on: ubuntu-24.04
@@ -44,9 +45,9 @@ jobs:
       uses: actions/checkout@v4
     
     - name: Terraform validate
-      run: |
-        terraform -chdir=terraform/configurations/${{ inputs.configuration }} init -backend=false
-        terraform -chdir=terraform/configurations/${{ inputs.configuration }} validate
+      uses: ./.github/actions/terraform/validate
+      with:
+        configuration: ${{ inputs.configuration }}
 
   terraform-docs:
     runs-on: ubuntu-24.04
@@ -58,9 +59,9 @@ jobs:
       uses: actions/checkout@v4
     
     - name: Terraform docs
-      run: |
-        terraform-docs --output-file TERRAFORM_DOCS.md terraform/configurations/
-        cmp terraform/configurations/${{ inputs.configuration }}/TERRAFORM_DOCS.md terraform/configurations/${{ inputs.configuration }}/README.md
+      uses: ./.github/actions/terraform/docs
+      with:
+        configuration: ${{ inputs.configuration }}
 
   terraform-security:
     runs-on: ubuntu-24.04
@@ -72,8 +73,9 @@ jobs:
       uses: actions/checkout@v4
     
     - name: Terraform security
-      run: |
-        trivy config --tf-exclude-downloaded-modules --severity HIGH,CRITICAL --exit-code 1 terraform/configurations/${{ inputs.configuration }}
+      uses: ./.github/actions/terraform/security
+      with:
+        configuration: ${{ inputs.configuration }}
 
   terraform-lint:
     runs-on: ubuntu-24.04
@@ -85,5 +87,7 @@ jobs:
       uses: actions/checkout@v4
     
     - name: Terraform lint
-      run: |
-        tflint --chdir=terraform/configurations/${{ inputs.configuration }} --minimum-failure-severity=error --var-file=env/${{ inputs.environment }}.tfvars
+      uses: ./.github/actions/terraform/lint
+      with:
+        configuration: ${{ inputs.configuration }}
+        environment: ${{ inputs.environment }}

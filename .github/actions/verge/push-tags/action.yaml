@@ -1,0 +1,36 @@
+name: push-tags
+description: >
+  Creates and pushes an exact semver tag plus floating tags (vMAJOR, vMAJOR.MINOR, latest)
+  for the current commit, force-updating floating tags on each release.
+
+inputs:
+  version:
+    description: 'Full semver to tag (e.g. "1.2.3" or "1.2.3-alpha.1"). No leading "v".'
+    required: true
+  push_floating_tags:
+    description: |
+      Whether to create and force-push floating tags. Defaults to "auto".
+        - Stable release floating tags: vMAJOR, vMAJOR.MINOR, latest
+        - Prerelease versions: only the exact tag is pushed (floating tags skipped)
+      Set to "false" to push only the exact tag for any version.
+    required: false
+    default: 'auto'
+
+outputs:
+  tags:
+    description: 'Space-separated list of all tags that were pushed.'
+    value: ${{ steps.push_tags.outputs.tags }}
+
+runs:
+  using: composite
+  steps:
+  - name: Set up Verge CLI
+    uses: ./.github/actions/verge/setup
+
+  - name: Push tags
+    id: push_tags
+    shell: bash
+    env:
+      VERSION: ${{ inputs.version }}
+      PUSH_FLOATING_TAGS: ${{ inputs.push_floating_tags }}
+    run: ${{ github.action_path }}/push-tags.sh

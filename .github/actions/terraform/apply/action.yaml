@@ -1,0 +1,16 @@
+name: 'Terraform Apply'
+description: 'Runs terraform apply with auto-approve'
+inputs:
+  configuration:
+    description: 'Name of the configuration'
+    required: true
+  environment:
+    description: 'Configuration environment'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: Terraform apply
+      shell: bash
+      run: |
+        terraform -chdir=terraform/configurations/${{ inputs.configuration }} apply -auto-approve -var-file=env/${{ inputs.environment }}.tfvars

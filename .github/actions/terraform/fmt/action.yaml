@@ -1,0 +1,13 @@
+name: 'Terraform Format Check'
+description: 'Checks if Terraform files are formatted correctly'
+inputs:
+  configuration:
+    description: 'Name of the configuration'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: Terraform format check
+      shell: bash
+      run: |
+        terraform -chdir=terraform/configurations/${{ inputs.configuration }} fmt -check

@@ -1,0 +1,16 @@
+name: 'Terraform Plan'
+description: 'Runs terraform plan for a configuration'
+inputs:
+  configuration:
+    description: 'Name of the configuration'
+    required: true
+  environment:
+    description: 'Configuration environment'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: Terraform plan
+      shell: bash
+      run: |
+        terraform -chdir=terraform/configurations/${{ inputs.configuration }} plan -var-file=env/${{ inputs.environment }}.tfvars

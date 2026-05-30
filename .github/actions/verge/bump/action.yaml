@@ -1,0 +1,43 @@
+name: bump
+description: >
+  Installs the Verge CLI, calculates the next version tag based on rules/overrides,
+  and parses its attributes (prerelease status, prefix patterns).
+
+inputs:
+  verge_arguments:
+    description: 'Raw arguments passed directly to the Verge CLI bump command (e.g. "--kind final").'
+    required: false
+    default: ''
+
+outputs:
+  tag:
+    description: 'The calculated next version tag (e.g., "1.2.3" or "v1.2.3-dev.1").'
+    value: ${{ steps.bump.outputs.tag }}
+  is_prerelease:
+    description: '"true" if the calculated tag is a prerelease version, "false" otherwise.'
+    value: ${{ steps.bump.outputs.is_prerelease }}
+  prerelease_prefix:
+    description: 'The computed prerelease tag prefix for tag cleanup (e.g., "v1.2.3-dev").'
+    value: ${{ steps.bump.outputs.prerelease_prefix }}
+
+runs:
+  using: composite
+  steps:
+  - name: Set up Verge CLI
+    uses: ./.github/actions/verge/setup
+
+  - name: Verge bump
+    id: bump
+    shell: bash
+    run: |
+      TAG=$(verge bump ${{ inputs.verge_arguments }})
+      echo "Calculated Tag: $TAG"
+      echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      is_prerelease=$(verge parse "$TAG" --field is_prerelease --format text)
+      echo "is_prerelease=$is_prerelease" >> $GITHUB_OUTPUT
+
+      if [[ "$is_prerelease" == "false" ]]; then
+        prerelease_prefix=$(verge parse "$TAG" --field floating.prerelease --format text)
+        echo "prerelease_prefix=$prerelease_prefix" >> $GITHUB_OUTPUT
+      fi

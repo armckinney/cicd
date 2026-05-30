@@ -1,0 +1,13 @@
+name: 'Terraform Show'
+description: 'Runs terraform show'
+inputs:
+  configuration:
+    description: 'Name of the configuration'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: Terraform show
+      shell: bash
+      run: |
+        terraform -chdir=terraform/configurations/${{ inputs.configuration }} show

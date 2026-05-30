@@ -1,0 +1,14 @@
+name: 'Terraform Validate'
+description: 'Initializes locally (no backend) and validates Terraform configuration'
+inputs:
+  configuration:
+    description: 'Name of the configuration'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: Terraform validate
+      shell: bash
+      run: |
+        terraform -chdir=terraform/configurations/${{ inputs.configuration }} init -backend=false
+        terraform -chdir=terraform/configurations/${{ inputs.configuration }} validate
