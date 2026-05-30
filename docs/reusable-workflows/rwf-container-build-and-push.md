@@ -51,5 +51,6 @@ This workflow does not define any `workflow_call` secrets.
 - The workflow interface exposes GHCR-oriented inputs: Dockerfile path, image name, image tag, target platforms, and an overwrite flag.
 - The workflow checks image existence with `docker buildx imagetools inspect` (manifest lookup) instead of pulling the image.
 - Build and cache cleanup run when either `overwrite` is `true`, or when `overwrite` is `false` and the image does not exist.
+- **Image Tag Hashing Limitation**: When `image_tag` is omitted, the workflow only hashes the `Dockerfile` itself to determine if a build is necessary. If the image build relies on other source or dependency files that could change and affect the built image, you should use an external tool (such as `verge`) in your calling workflow to compute a more comprehensive image tag and pass it explicitly via `image_tag`.
 - This is the standard entry point used before the Python and Terraform workflows in this repository.
 - The bundled caller example is [../../.github/workflows/wf-container-build-and-push.yaml](../../.github/workflows/wf-container-build-and-push.yaml).

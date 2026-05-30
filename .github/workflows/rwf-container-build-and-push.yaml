@@ -1,5 +1,5 @@
 name: container-build-and-push
-
+# Supports container builds, including ephemeral/dev builds where tags are resolved externally and not overwritten
 on:
   workflow_call:
     inputs:
@@ -70,11 +70,11 @@ jobs:
       id: resolve_image_tag
       run: |
         if [[ -n "${{ inputs.image_tag }}" ]]; then
-          echo "image_tag=${{ inputs.image_tag }}" >> "$GITHUB_OUTPUT"
+          image_tag="${{ inputs.image_tag }}"
         else
           image_tag="$(sha256sum "${{ inputs.dockerfile }}" | cut -c1-12)"
-          echo "image_tag=$image_tag" >> "$GITHUB_OUTPUT"
         fi
+        echo "image_tag=$image_tag" >> "$GITHUB_OUTPUT"
         echo "Resolved Image: ghcr.io/${{ github.repository_owner }}/${{ inputs.image_name }}:$image_tag"
 
     - name: Check if image exists
@@ -96,7 +96,7 @@ jobs:
 
     - name: Build from cache and push
       id: docker_build
-      if: ${{ inputs.overwrite || !fromJSON(steps.check_image.outputs.image_exists || 'false') }}
+      if: ${{ inputs.overwrite || steps.check_image.outputs.image_exists == 'false' }}
       uses: docker/build-push-action@v6
       with:
         builder: ${{ steps.buildx.outputs.name }}
@@ -109,7 +109,7 @@ jobs:
         tags: ghcr.io/${{ github.repository_owner }}/${{ inputs.image_name }}:${{ steps.resolve_image_tag.outputs.image_tag }}
 
     - name: Clean cache
-      if: ${{ inputs.overwrite || !fromJSON(steps.check_image.outputs.image_exists || 'false') }}
+      if: ${{ inputs.overwrite || steps.check_image.outputs.image_exists == 'false' }}
       shell: bash
       run: |
         rm -rf /tmp/.buildx-cache
