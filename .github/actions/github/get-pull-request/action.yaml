@@ -1,14 +1,14 @@
 name: get-pull-request
 description: >
   Returns the PR number and bump label (major|minor|patch) for the current branch
-  or a specific commit SHA. Defaults to patch if no PR or bump label is found.
+  or a specific commit SHA. Defaults to major if no PR or bump label is found.
 
 outputs:
   pr_number:
     description: 'PR number (empty string if no PR found)'
     value: ${{ steps.get_pr.outputs.pr_number }}
   bump_type:
-    description: 'Bump type derived from PR label: major | minor | patch (default: patch)'
+    description: 'Bump type derived from PR label: major | minor | patch (default: major)'
     value: ${{ steps.get_pr.outputs.bump_type }}
   json:
     description: 'Full PR JSON object (compact, single line). Empty string if no PR found.'

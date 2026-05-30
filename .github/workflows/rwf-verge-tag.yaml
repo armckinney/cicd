@@ -42,11 +42,34 @@ jobs:
         fetch-depth: 0
         token: ${{ secrets.token || github.token }}
 
+    - name: Get PR Info for Bump Kind
+      id: pr_info
+      uses: ./.github/actions/github/get-pull-request
+      with:
+        token: ${{ secrets.token || github.token }}
+
+    - name: Resolve Verge Arguments
+      id: resolve_args
+      shell: bash
+      run: |
+        ARGS="${{ inputs.verge_arguments }}"
+        
+        # On the default branch, if no explicit --kind is supplied,
+        # dynamically resolve it from the PR labels (defaulting to patch)
+        if [[ "${{ github.ref_name }}" == "${{ github.event.repository.default_branch }}" ]]; then
+          if [[ ! "$ARGS" =~ "--kind" ]]; then
+            BUMP_KIND="${{ steps.pr_info.outputs.bump_type }}"
+            ARGS="$ARGS --kind $BUMP_KIND"
+          fi
+        fi
+        
+        echo "args=$ARGS" >> $GITHUB_OUTPUT
+
     - name: Verge bump
       id: verge_bump
       uses: ./.github/actions/verge/bump
       with:
-        verge_arguments: ${{ inputs.verge_arguments }}
+        verge_arguments: ${{ steps.resolve_args.outputs.args }}
 
     - name: Push tags
       uses: ./.github/actions/verge/push-tags

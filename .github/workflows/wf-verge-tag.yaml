@@ -10,6 +10,5 @@ jobs:
     uses: ./.github/workflows/rwf-verge-tag.yaml
     secrets: inherit
     with:
-      verge_arguments: ${{ github.ref_name == github.event.repository.default_branch && '--kind patch' || '' }}
       prune_dev_tags: ${{ github.ref_name == github.event.repository.default_branch }}
 
