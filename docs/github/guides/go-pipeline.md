@@ -55,7 +55,7 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     uses: ./.github/workflows/rwf-verge-tag.yaml
     with:
-      verge_arguments: '--kind final'
+      verge_arguments: '--kind patch'
       prune_dev_tags: true
 
   # Stage 4: Build & Publish (compiles binary and publishes it to the release)
@@ -117,7 +117,7 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     uses: ./.github/workflows/rwf-verge-tag.yaml
     with:
-      verge_arguments: '--kind final'
+      verge_arguments: '--kind patch'
       prune_dev_tags: true
 
   # Stage 4: Professional Release via GoReleaser
