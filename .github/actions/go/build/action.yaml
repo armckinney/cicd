@@ -1,0 +1,33 @@
+name: 'Go Build'
+description: 'Compiles Go packages and binaries'
+inputs:
+  working-directory:
+    description: 'Directory where Go code is located'
+    required: false
+    default: '.'
+  packages:
+    description: 'Go packages or main file to build'
+    required: false
+    default: './...'
+  output:
+    description: 'Output binary path/name'
+    required: false
+    default: ''
+  flags:
+    description: 'Additional flags for go build (e.g. -ldflags="-s -w")'
+    required: false
+    default: ''
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Run Build
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        OUT_FLAG=""
+        if [ -n "${{ inputs.output }}" ]; then
+          OUT_FLAG="-o ${{ inputs.output }}"
+        fi
+        
+        go build -v $OUT_FLAG ${{ inputs.flags }} ${{ inputs.packages }}

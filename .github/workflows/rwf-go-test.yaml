@@ -1,0 +1,58 @@
+name: go-test
+
+on:
+  workflow_call:
+    inputs:
+      working_directory:
+        description: 'Directory where Go code is located'
+        type: string
+        required: false
+        default: '.'
+      go_version:
+        description: 'Go version to install'
+        type: string
+        required: false
+        default: ''
+      race:
+        description: 'Enable race detector'
+        type: boolean
+        required: false
+        default: true
+      coverage:
+        description: 'Generate code coverage profile'
+        type: boolean
+        required: false
+        default: true
+      packages:
+        description: 'Go packages to test'
+        type: string
+        required: false
+        default: './...'
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: ./.github/actions/go/setup
+      with:
+        go-version: ${{ inputs.go_version }}
+        working-directory: ${{ inputs.working_directory }}
+
+    - name: Run Go Tests
+      uses: ./.github/actions/go/test
+      with:
+        working-directory: ${{ inputs.working_directory }}
+        race: ${{ inputs.race }}
+        coverage: ${{ inputs.coverage }}
+        packages: ${{ inputs.packages }}

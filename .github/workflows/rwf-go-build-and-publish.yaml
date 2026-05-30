@@ -1,0 +1,70 @@
+name: go-build-and-publish
+
+on:
+  workflow_call:
+    inputs:
+      working_directory:
+        description: 'Directory where Go code is located'
+        type: string
+        required: false
+        default: '.'
+      go_version:
+        description: 'Go version to install'
+        type: string
+        required: false
+        default: ''
+      packages:
+        description: 'Go packages or main file to build'
+        type: string
+        required: false
+        default: './...'
+      output:
+        description: 'Output binary path/name'
+        type: string
+        required: false
+        default: ''
+      flags:
+        description: 'Additional flags for go build'
+        type: string
+        required: false
+        default: ''
+      publish_tag:
+        description: 'Git tag to publish release assets to (leave empty to build only)'
+        type: string
+        required: false
+        default: ''
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: ./.github/actions/go/setup
+      with:
+        go-version: ${{ inputs.go_version }}
+        working-directory: ${{ inputs.working_directory }}
+
+    - name: Build Go binary
+      uses: ./.github/actions/go/build
+      with:
+        working-directory: ${{ inputs.working_directory }}
+        packages: ${{ inputs.packages }}
+        output: ${{ inputs.output }}
+        flags: ${{ inputs.flags }}
+
+    - name: Publish Go binary to GitHub Release
+      if: ${{ inputs.publish_tag != '' && inputs.output != '' }}
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ inputs.publish_tag }}
+        files: ${{ inputs.working_directory }}/${{ inputs.output }}

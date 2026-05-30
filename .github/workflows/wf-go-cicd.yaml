@@ -1,0 +1,34 @@
+name: wf-go-cicd
+
+on:
+  pull_request:
+    branches: [ main ]
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  go-static-analysis:
+    uses: ./.github/workflows/rwf-go-static-analysis.yaml
+    with:
+      working_directory: tests/go/example
+      go_version: '1.22'
+
+  go-test:
+    uses: ./.github/workflows/rwf-go-test.yaml
+    with:
+      working_directory: tests/go/example
+      go_version: '1.22'
+      race: true
+      coverage: true
+
+  go-build:
+    needs: [ go-static-analysis, go-test ]
+    uses: ./.github/workflows/rwf-go-build-and-publish.yaml
+    with:
+      working_directory: tests/go/example
+      go_version: '1.22'
+      packages: '.'
+      output: 'hello-world-bin'
+      publish_tag: ''
