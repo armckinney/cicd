@@ -10,11 +10,12 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN mkdir /tmp/container \
     && cd /tmp/container \
     # supporting installs
-    && apt update \
+    && apt-get update \
     # primary installs
+    && curl -sSL https://raw.githubusercontent.com/armckinney/verge/main/install.sh | bash \
     # clean up
-    && apt autoremove -y \
-    && apt clean -y \
+    && apt-get autoremove -y \
+    && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /tmp/container
 

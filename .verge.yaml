@@ -1,0 +1,14 @@
+version_type: vsemver
+
+default:
+  bump_kind: prerelease
+  prerelease_stage: dev
+
+sequence:
+  type: increment
+
+provider:
+  type: gittag
+  gittag:
+    repo_dir: "."
+    include_prerelease: true
