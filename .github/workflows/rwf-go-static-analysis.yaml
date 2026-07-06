@@ -33,14 +33,17 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Checkout CICD library
+      uses: armckinney/cicd/.github/actions/github/checkout-cicd-library@main
+
     - name: Set up Go
-      uses: ./.github/actions/go/setup
+      uses: ./.github/cicd/.github/actions/go/setup
       with:
         go-version: ${{ inputs.go_version }}
         working-directory: ${{ inputs.working_directory }}
 
     - name: Run Go Lint
-      uses: ./.github/actions/go/lint
+      uses: ./.github/cicd/.github/actions/go/lint
       with:
         working-directory: ${{ inputs.working_directory }}
         golangci-lint-version: ${{ inputs.golangci_lint_version }}

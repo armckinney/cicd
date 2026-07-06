@@ -48,15 +48,18 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
     
+    - name: Checkout CICD library
+      uses: armckinney/cicd/.github/actions/github/checkout-cicd-library@main
+
     - name: Terraform lint
-      uses: ./.github/actions/terraform/lint
+      uses: ./.github/cicd/.github/actions/terraform/lint
       with:
         configuration: ${{ inputs.configuration }}
         environment: ${{ inputs.environment }}
     
   terraform-plan:
     needs: terraform-lint
-    uses: armckinney/cicd/.github/workflows/rwf-terraform-plan.yaml@main
+    uses: ./.github/workflows/rwf-terraform-plan.yaml
     with:
       container_image: ${{ inputs.container_image }}
       configuration: ${{ inputs.configuration }}
@@ -70,7 +73,7 @@ jobs:
 
   terraform-apply:
     needs: terraform-plan
-    uses: armckinney/cicd/.github/workflows/rwf-terraform-apply.yaml@main
+    uses: ./.github/workflows/rwf-terraform-apply.yaml
     with:
       container_image: ${{ inputs.container_image }}
       configuration: ${{ inputs.configuration }}

@@ -44,14 +44,17 @@ jobs:
       with:
         fetch-depth: 0
 
+    - name: Checkout CICD library
+      uses: armckinney/cicd/.github/actions/github/checkout-cicd-library@main
+
     - name: Set up Go
-      uses: ./.github/actions/go/setup
+      uses: ./.github/cicd/.github/actions/go/setup
       with:
         go-version: ${{ inputs.go_version }}
         working-directory: ${{ inputs.working_directory }}
 
     - name: Run GoReleaser
-      uses: ./.github/actions/go/releaser
+      uses: ./.github/cicd/.github/actions/go/releaser
       with:
         version: ${{ inputs.goreleaser_version }}
         args: ${{ inputs.args }}

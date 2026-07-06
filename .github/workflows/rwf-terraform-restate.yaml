@@ -56,6 +56,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Checkout CICD library
+        uses: armckinney/cicd/.github/actions/github/checkout-cicd-library@main
+
       - name: Azure Login
         if: env.ARM_CLIENT_ID != '' && env.ARM_SUBSCRIPTION_ID != '' && env.ARM_TENANT_ID != ''
         uses: azure/login@v2
@@ -66,16 +69,15 @@ jobs:
           creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}","subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
 
       - name: Terraform init
-        uses: ./.github/actions/terraform/init
+        uses: ./.github/cicd/.github/actions/terraform/init
         with:
           configuration: ${{ inputs.configuration }}
           environment: ${{ inputs.environment }}
 
       - name: Delete Terraform statefile
-        uses: ./.github/actions/terraform/delete-state
+        uses: ./.github/cicd/.github/actions/terraform/delete-state
         with:
           configuration: ${{ inputs.configuration }}
-
 
   terraform-import:
     needs: delete-state
@@ -94,15 +96,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Checkout CICD library
+        uses: armckinney/cicd/.github/actions/github/checkout-cicd-library@main
+
       - name: Terraform init
-        uses: ./.github/actions/terraform/init
+        uses: ./.github/cicd/.github/actions/terraform/init
         with:
           configuration: ${{ inputs.configuration }}
           environment: ${{ inputs.environment }}
 
       - name: Terraform import
         continue-on-error: true
-        uses: ./.github/actions/terraform/import
+        uses: ./.github/cicd/.github/actions/terraform/import
         with:
           configuration: ${{ inputs.configuration }}
           environment: ${{ inputs.environment }}

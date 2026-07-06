@@ -42,9 +42,12 @@ jobs:
         fetch-depth: 0
         token: ${{ secrets.token || github.token }}
 
+    - name: Checkout CICD library
+      uses: armckinney/cicd/.github/actions/github/checkout-cicd-library@main
+
     - name: Get PR Info for Bump Kind
       id: pr_info
-      uses: ./.github/actions/github/get-pull-request
+      uses: ./.github/cicd/.github/actions/github/get-pull-request
       with:
         token: ${{ secrets.token || github.token }}
 
@@ -67,18 +70,18 @@ jobs:
 
     - name: Verge bump
       id: verge_bump
-      uses: ./.github/actions/verge/bump
+      uses: ./.github/cicd/.github/actions/verge/bump
       with:
         verge_arguments: ${{ steps.resolve_args.outputs.args }}
 
     - name: Push tags
-      uses: ./.github/actions/verge/push-tags
+      uses: ./.github/cicd/.github/actions/verge/push-tags
       with:
         version: ${{ steps.verge_bump.outputs.tag }}
 
     - name: Prune Old Dev Tags on Final Release
       if: success() && inputs.prune_dev_tags == true && steps.verge_bump.outputs.is_prerelease == 'false'
-      uses: ./.github/actions/github/prune-tags
+      uses: ./.github/cicd/.github/actions/github/prune-tags
       with:
         prerelease_prefix: ${{ steps.verge_bump.outputs.prerelease_prefix }}
         token: ${{ secrets.token || github.token }}

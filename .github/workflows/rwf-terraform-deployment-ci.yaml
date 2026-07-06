@@ -40,7 +40,7 @@ defaults:
 
 jobs:
   static-analysis:
-    uses: armckinney/cicd/.github/workflows/rwf-terraform-static-analysis.yaml@main
+    uses: ./.github/workflows/rwf-terraform-static-analysis.yaml
     with:
       container_image: ${{ inputs.container_image }}
       configuration: ${{ inputs.configuration }}
@@ -48,7 +48,7 @@ jobs:
 
   terraform-plan:
     needs: static-analysis
-    uses: armckinney/cicd/.github/workflows/rwf-terraform-plan.yaml@main
+    uses: ./.github/workflows/rwf-terraform-plan.yaml
     with:
       container_image: ${{ inputs.container_image }}
       configuration: ${{ inputs.configuration }}
@@ -62,7 +62,7 @@ jobs:
 
   terraform-apply:
     needs: terraform-plan
-    uses: armckinney/cicd/.github/workflows/rwf-terraform-apply.yaml@main
+    uses: ./.github/workflows/rwf-terraform-apply.yaml
     with:
       container_image: ${{ inputs.container_image }}
       configuration: ${{ inputs.configuration }}

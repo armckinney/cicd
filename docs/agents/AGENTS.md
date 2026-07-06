@@ -1,17 +1,12 @@
 # Agent Configuration
 
-This document serves as the central index and entry point for AI agents working in this repository.
+This repository hosts workflows and actions designed for containerized CI/CD. Autonomous agents working in this repository must review the instruction files in `docs/agents/context/` before making changes.
 
-## Instructions Source
+## Available Instruction Files
 
-**All agents should reference the instruction files in `docs/agents/context/` before making changes.**
-
-## System Message
-
-You are working with this repository. Always reference the instruction files under `docs/agents/context/` and execute specific task templates under `docs/agents/skills/` where applicable.
-
-## Key Principles
-
-1. **Instructions First**: Check matching path-scoped instructions before changing code.
-2. **ADR Alignment**: Consult ADRs in `docs/architecture-design-records/` before making architectural changes.
-3. **Write ADRs**: Document all significant design choices as new ADRs using the `/create-adr` skill.
+* [Git Conventions](file:///workspaces/cicd/docs/agents/context/git-conventions.instructions.md)
+  * Rules and guidelines for Git operations and commits.
+* [Docker Build Instructions](file:///workspaces/cicd/docs/agents/context/docker-build.instructions.md)
+  * Rules and guidelines for running Docker build steps.
+* [Workflow and Action Standards](file:///workspaces/cicd/docs/agents/context/workflow-standards.instructions.md)
+  * Rules and guidelines for referencing reusable workflows and custom actions using the bootstrap checkout strategy.

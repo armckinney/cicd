@@ -55,13 +55,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Checkout CICD library
+        uses: armckinney/cicd/.github/actions/github/checkout-cicd-library@main
+
       - name: Terraform init
-        uses: ./.github/actions/terraform/init
+        uses: ./.github/cicd/.github/actions/terraform/init
         with:
           configuration: ${{ inputs.configuration }}
           environment: ${{ inputs.environment }}
 
       - name: Terraform show
-        uses: ./.github/actions/terraform/show
+        uses: ./.github/cicd/.github/actions/terraform/show
         with:
           configuration: ${{ inputs.configuration }}
