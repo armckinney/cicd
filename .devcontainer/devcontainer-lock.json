@@ -1,19 +1,19 @@
 {
   "features": {
-    "https://github.com/armckinney/containers/releases/download/v1.0.6/devcontainer-feature-antigravity.tgz": {
-      "version": "1.1.0",
-      "resolved": "https://github.com/armckinney/containers/releases/download/v1.0.6/devcontainer-feature-antigravity.tgz",
-      "integrity": "sha256:db09bd0ce634203c94442dae844a38ba01cb7d076327490ab92cdce7bb3a84d9"
+    "https://github.com/armckinney/containers/releases/download/v1.0.7/devcontainer-feature-antigravity.tgz": {
+      "version": "1.5.0",
+      "resolved": "https://github.com/armckinney/containers/releases/download/v1.0.7/devcontainer-feature-antigravity.tgz",
+      "integrity": "sha256:2d296808c29f46a3cdc56cb5407382585985f597098cd16443484dc90f2d57d9"
     },
-    "https://github.com/armckinney/containers/releases/download/v1.0.6/devcontainer-feature-copilot.tgz": {
-      "version": "1.1.0",
-      "resolved": "https://github.com/armckinney/containers/releases/download/v1.0.6/devcontainer-feature-copilot.tgz",
-      "integrity": "sha256:06c4eb495a6b464b9a591e627a1596bf11acd7d5dae3e38bccfa7e7b8a481fbe"
+    "https://github.com/armckinney/containers/releases/download/v1.0.7/devcontainer-feature-copilot.tgz": {
+      "version": "1.5.0",
+      "resolved": "https://github.com/armckinney/containers/releases/download/v1.0.7/devcontainer-feature-copilot.tgz",
+      "integrity": "sha256:5c78b38b0c245c21d370114a31dc44b80fbac81b3685c2beeae0f8dbac3d3ad3"
     },
-    "https://github.com/armckinney/containers/releases/download/v1.0.6/devcontainer-feature-vscode-customizations.tgz": {
+    "https://github.com/armckinney/containers/releases/download/v1.0.7/devcontainer-feature-vscode-customizations.tgz": {
       "version": "1.1.0",
-      "resolved": "https://github.com/armckinney/containers/releases/download/v1.0.6/devcontainer-feature-vscode-customizations.tgz",
-      "integrity": "sha256:a8d0ce792a18c80a5d10a142258ff2c6da5631f1f92e931ab01bcb48772c81fe"
+      "resolved": "https://github.com/armckinney/containers/releases/download/v1.0.7/devcontainer-feature-vscode-customizations.tgz",
+      "integrity": "sha256:553b3a9540833cc21371b466c0f6312f200c12a2ffaa92033d7526a62c0e39b6"
     }
   }
 }
