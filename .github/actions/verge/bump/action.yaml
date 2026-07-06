@@ -24,7 +24,7 @@ runs:
   using: composite
   steps:
   - name: Set up Verge CLI
-    uses: ./.github/actions/verge/setup
+    uses: ./.github/cicd/.github/actions/verge/setup
 
   - name: Verge bump
     id: bump

@@ -43,14 +43,17 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Checkout CICD library
+      uses: armckinney/cicd/.github/actions/github/checkout-cicd-library@main
+
     - name: Set up Go
-      uses: ./.github/actions/go/setup
+      uses: ./.github/cicd/.github/actions/go/setup
       with:
         go-version: ${{ inputs.go_version }}
         working-directory: ${{ inputs.working_directory }}
 
     - name: Run Go Tests
-      uses: ./.github/actions/go/test
+      uses: ./.github/cicd/.github/actions/go/test
       with:
         working-directory: ${{ inputs.working_directory }}
         race: ${{ inputs.race }}
