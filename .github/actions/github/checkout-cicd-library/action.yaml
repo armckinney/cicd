@@ -1,0 +1,23 @@
+name: 'checkout-cicd-library'
+description: 'Bootstraps and checkouts the CI/CD repository at the correct dynamic ref'
+
+runs:
+  using: composite
+  steps:
+    - name: Resolve CI/CD Actions Ref
+      id: resolve_ref
+      shell: bash
+      run: |
+        REF=$(echo "${{ job.workflow_ref }}" | cut -d'@' -f2)
+        echo "ref=$REF" >> $GITHUB_OUTPUT
+
+    - name: Checkout CI/CD actions
+      uses: actions/checkout@v4
+      with:
+        repository: armckinney/cicd
+        ref: ${{ steps.resolve_ref.outputs.ref }}
+        path: .github/cicd
+        sparse-checkout: |
+          .github
+        sparse-checkout-cone-mode: true
+        fetch-depth: 1
