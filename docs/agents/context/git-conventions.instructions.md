@@ -1,3 +1,10 @@
+---
+name: Git Conventions
+description: Rules and guidelines for Git operations and commits.
+applyTo:
+  - "**"
+---
+
 # Git Conventions
 
 ## Rule: Do Not Make Commits

@@ -1,4 +1,8 @@
-# Development
+# ADR 002: Terraform Development
+
+* **Status**: Accepted
+* **Date**: 2026-07-06
+* **Author**: Developer
 
 <!-- FIXME: this should be in an documentation repo for ADRs and Specifications -->
 ## Tools
