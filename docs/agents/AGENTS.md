@@ -4,9 +4,15 @@ This repository hosts workflows and actions designed for containerized CI/CD. Au
 
 ## Available Instruction Files
 
-* [Git Conventions](file:///workspaces/cicd/docs/agents/context/git-conventions.instructions.md)
+* [Git Conventions](./context/git-conventions.instructions.md)
   * Rules and guidelines for Git operations and commits.
-* [Docker Build Instructions](file:///workspaces/cicd/docs/agents/context/docker-build.instructions.md)
+* [Docker Build Instructions](./context/docker-build.instructions.md)
   * Rules and guidelines for running Docker build steps.
-* [Workflow and Action Standards](file:///workspaces/cicd/docs/agents/context/workflow-standards.instructions.md)
+* [Workflow and Action Standards](./context/workflow-standards.instructions.md)
   * Rules and guidelines for referencing reusable workflows and custom actions using the bootstrap checkout strategy.
+
+## Available Agent Skills
+
+* [RWF Creation Skill](./skills/rwf-creation/SKILL.md)
+  * Checklist and specialized instructions for creating and chaining Reusable Workflows (RWFs) and custom actions.
+
